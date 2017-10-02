@@ -1,0 +1,25 @@
+{
+    "name": "dayjo/alfred-time-tracker",
+    "description": "Time tracker",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Joel Day",
+            "email": "git@dayjo.me"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Dayjo/alfred-workflow-helper"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Dayjo/php-json-handler"
+        }
+    ],
+    "require": {
+        "dayjo/alfred-workflow-helper": "v0.1.*",
+        "dayjo/php-json-handler": "v1.0.*"
+    }
+}
