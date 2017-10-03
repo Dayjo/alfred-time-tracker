@@ -5,12 +5,29 @@ use Alfred\ItemList as ItemList;
 use Alfred\Item as Item;
 use Dayjo\JSON as JSON;
 
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
+
+
 class TimeTracker
 {
     private $Workflow;
+    private $logFiles;
+    private $tasksFile;
 
     const STATE_SEARCHING = 1;
     const STATE_RUNNING = 1;
+
+    public function __construct()
+    {
+        // Grab the current log
+        $this->logFiles[date('Y-m-d')] = new JSON(__DIR__ . '/../logs/log_' . date('Y-m-d') . '.json');
+        if (empty($this->logFiles[date('Y-m-d')]->data)) {
+            $this->logFiles[date('Y-m-d')]->data = array();
+        }
+
+        // Grab all of the existing tasks
+        $this->tasksFile = new JSON(__DIR__ . '/../logs/tasks.json');
+    }
 
     /**
      * Handle the search command
@@ -42,6 +59,60 @@ class TimeTracker
      */
     private function initReports()
     {
+        /**
+         * Add the command for generating reports
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':',
+            'command' => function ($input) {
+                $commands = ['stop', 'report'];
+
+                // Create a new Item List
+                $List = new ItemList;
+
+                // Loop through all of the existing task names
+                foreach ($commands as $cmd) {
+
+                    // If the input matches the task name, output the task
+                    if (trim($input) == '' || (stristr($cmd, $input) && $cmd != $input)) {
+
+                        // Add the new item to the list
+                        $List->add(new Item([
+                            'title' => $cmd,
+                            'arg' => ":{$cmd}",
+                            'autocomplete' => ":". $cmd])
+                        );
+                    }
+                }
+
+
+                // Output the list of tasks to
+                echo $List->output();
+            }
+          ]
+        ));
+
+        /**
+         * Add the command for generating reports
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':stop',
+            'command' => function ($input) {
+                // Create a new Item List
+                $List = new ItemList;
+
+                // Add the new item to the list
+                $List->add(new Item([
+                    'title' => 'Stop Tracking ' . $this->currentlyTracking,
+                    'arg' => ':stop',
+                    'autocomplete' => ':stop'])
+                );
+                // Output the list of tasks to
+                echo $List->output();
+            }
+        ]));
 
         /**
          * Add the command for generating reports
@@ -51,34 +122,27 @@ class TimeTracker
             'prefix' => ':report',
             'command' => function ($input) {
                 $reports = ['weekly', 'monthly','yearly'];
+                // Create a new Item List
+                $List = new ItemList;
 
-                // If running the command
-                if ($input && $this->state == static::STATE_RUNNING) {
-                    echo "Running {$input}";
-                } else {
+                // Loop through all of the existing task names
+                foreach ($reports as $report) {
 
-                    // Create a new Item List
-                    $List = new ItemList;
+                    // If the input matches the task name, output the task
+                    if (trim($input) == '' || (stristr($report, $input) && $report != $input)) {
 
-                    // Loop through all of the existing task names
-                    foreach ($reports as $report) {
-
-                        // If the input matches the task name, output the task
-                        if (trim($input) == '' || (stristr($report, $input) && $report != $input)) {
-
-                            // Add the new item to the list
-                            $List->add(new Item([
-                                'title' => 'Generate ' . $report. ' report',
-                                'arg' => ':report ' . $report,
-                                'autocomplete' => ':report ' . $report])
-                            );
-                        }
+                        // Add the new item to the list
+                        $List->add(new Item([
+                            'title' => 'Generate ' . $report. ' report',
+                            'arg' => ':report ' . $report,
+                            'autocomplete' => ':report ' . $report])
+                        );
                     }
-
-
-                    // Output the list of tasks to
-                    echo $List->output();
                 }
+
+
+                // Output the list of tasks to
+                echo $List->output();
             }
           ]
         ));
@@ -100,7 +164,7 @@ class TimeTracker
                 $reports = ['weekly', 'monthly','yearly'];
 
                 // If running the command
-                if ($input && $this->state == static::STATE_RUNNING) {
+                if ($input) {
                     echo "Generating {$input} Report!";
                 }
             }
@@ -110,6 +174,9 @@ class TimeTracker
 
     public function initRunTasks()
     {
+        /**
+         * The actual start tracking command
+         */
         $this->Workflow->addCommand(new Command(
           [
             'prefix' => ':start',
@@ -120,7 +187,20 @@ class TimeTracker
                     return false;
                 }
 
-                echo "STARTING TO TRACK {$input}";
+                $this->track($input);
+            }
+          ]
+        ));
+
+        /**
+         * Add the command for stopping tracking
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':stop',
+            'command' => function ($input) {
+                $this->track('stop');
+                echo "Stopped Tracking";
             }
           ]
         ));
@@ -183,5 +263,19 @@ class TimeTracker
             }
           ]
         ));
+    }
+
+    /**
+    * Write a log to today's log file
+    * @param  string $text The task name to log
+    */
+    private function track($task)
+    {
+        $this->logFiles[date('Y-m-d')]->data[] = [ 'time' => time(), 'task' => $task, 'notes' => '' ];
+
+        // Add $text to the list of tasks if it doesn't exist
+        if (!in_array($task, array('stop')) && !in_array($task, $this->tasksFile->data)) {
+            $this->tasksFile->data[] = $task;
+        }
     }
 }
