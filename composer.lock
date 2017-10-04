@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "82f9f29fca8c31f6aaec7418e605ebe2",
+    "hash": "ef7eee74c955b76a4924989248381373",
+    "content-hash": "69bfa51670e92346183ac8f3352e46aa",
     "packages": [
         {
             "name": "dayjo/alfred-workflow-helper",
@@ -40,20 +41,20 @@
                 "source": "https://github.com/Dayjo/alfred-workflow-helper/tree/v0.1.5",
                 "issues": "https://github.com/Dayjo/alfred-workflow-helper/issues"
             },
-            "time": "2017-10-02T10:29:17+00:00"
+            "time": "2017-10-02 10:29:17"
         },
         {
             "name": "dayjo/php-json-handler",
-            "version": "v1.0.7",
+            "version": "v1.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dayjo/php-json-handler.git",
-                "reference": "f2ffd591a868705ea2037a6720d6b4ce6193747e"
+                "reference": "51f931d6221df75c1eef1b14f5fc71ce6ac3ab35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dayjo/php-json-handler/zipball/f2ffd591a868705ea2037a6720d6b4ce6193747e",
-                "reference": "f2ffd591a868705ea2037a6720d6b4ce6193747e",
+                "url": "https://api.github.com/repos/Dayjo/php-json-handler/zipball/51f931d6221df75c1eef1b14f5fc71ce6ac3ab35",
+                "reference": "51f931d6221df75c1eef1b14f5fc71ce6ac3ab35",
                 "shasum": ""
             },
             "type": "library",
@@ -73,10 +74,10 @@
             ],
             "description": "Class for opening and writing to json files easily",
             "support": {
-                "source": "https://github.com/Dayjo/php-json-handler/tree/v1.0.7",
+                "source": "https://github.com/Dayjo/php-json-handler/tree/v1.0.10",
                 "issues": "https://github.com/Dayjo/php-json-handler/issues"
             },
-            "time": "2017-10-02T11:12:52+00:00"
+            "time": "2017-10-03 16:31:29"
         }
     ],
     "packages-dev": [],

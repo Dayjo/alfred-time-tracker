@@ -20,6 +20,6 @@
     ],
     "require": {
         "dayjo/alfred-workflow-helper": "v0.1.*",
-        "dayjo/php-json-handler": "v1.0.*"
+        "dayjo/php-json-handler": "v1.0.10"
     }
 }

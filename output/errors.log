@@ -10,3 +10,38 @@
 :stop
 :stop
 :report monthly
+:start testing
+:start test
+:stop
+:note 1507049145
+:note 1507049145 1507049145 testing notes
+:note test 
+:note test Here are my notes
+:note 1507049145
+:note 1507049145test here's a not
+:note 1507049145 hello wolrd
+:start l
+:start test
+:note 1507049878 this is a tes
+:note 1507049978 log descri
+:note 1507049145 log description
+:note 1507049878 second te
+:start admin
+:start alfred
+:note 1507104953 this is a note
+:note 1507104962 I love alfred so m
+:start ane
+:start templer
+:start turbo
+:start crab
+:start cook
+:start colomb
+:start cooking
+:start alfred
+:note 1507104962 this is the first alfre
+:note 1507104962 this is also the first on
+:note 1507104962this is a test
+:stop
+:start adm
+:start alfredo
+:start admin

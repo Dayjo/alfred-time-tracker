@@ -20,7 +20,7 @@ class TimeTracker
     public function __construct()
     {
         // Grab the current log
-        $this->logFiles[date('Y-m-d')] = new JSON(__DIR__ . '/../logs/log_' . date('Y-m-d') . '.json');
+        $this->logFiles[date('Y-m-d')] = new JSON(__DIR__ . '/../logs/' . date('M Y') . '/log_' . date('Y-m-d') . '.json');
         if (empty($this->logFiles[date('Y-m-d')]->data)) {
             $this->logFiles[date('Y-m-d')]->data = array();
         }
@@ -38,7 +38,7 @@ class TimeTracker
         $this->state = static::STATE_SEARCHING;
         $this->Workflow = new Workflow();
         $this->initTasks();
-        $this->initReports();
+        $this->initCommands();
         $this->Workflow->run();
     }
 
@@ -57,7 +57,7 @@ class TimeTracker
     /**
      * Initialises the report command
      */
-    private function initReports()
+    private function initCommands()
     {
         /**
          * Add the command for generating reports
@@ -109,6 +109,31 @@ class TimeTracker
                     'arg' => ':stop',
                     'autocomplete' => ':stop'])
                 );
+                // Output the list of tasks to
+                echo $List->output();
+            }
+        ]));
+
+        /**
+         * Add the command for generating reports
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':note',
+            'command' => function ($input) {
+                // Create a new Item List
+                $List = new ItemList;
+
+                foreach ($this->logFiles[date('Y-m-d')]->data as $log) {
+                    // Add the new item to the list
+                    $List->add(new Item([
+                        'title' => date("H:i:s", $log->time) . " " . $log->task,
+                        'arg' => ':note ' .  $log->time . substr($input, strlen($log->task)),
+                        'autocomplete' => ':note ' . $log->task
+                        ])
+                    );
+                }
+
                 // Output the list of tasks to
                 echo $List->output();
             }
@@ -204,6 +229,24 @@ class TimeTracker
             }
           ]
         ));
+
+        /**
+         * Add the command for generating reports
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':note',
+            'command' => function ($input) {
+                $time = explode(' ', $input)[0];
+                $notes = substr($input, strlen($time));
+
+                foreach ($this->logFiles[date('Y-m-d', $time)]->data as &$log) {
+                    if ($log->time == $time) {
+                        $log->notes = trim($notes);
+                    }
+                }
+            }
+        ]));
     }
 
     /**
@@ -252,8 +295,9 @@ class TimeTracker
                 }
 
                 // Add the currently tracked item
+                $currentlyTracking = $this->currentlyTracking();
                 $List->add(new Item([
-                    'title' => "Currently Tracking {$currentlyTracking} {$currentlyTrackingFor}",
+                    'title' => "Currently Tracking {$currentlyTracking->task} {$currentlyTracking->length}",
                     'arg' => '',
                     'valid' => false
                 ]));
@@ -263,6 +307,17 @@ class TimeTracker
             }
           ]
         ));
+    }
+
+    /**
+     * Return the currently tracked task
+     * @return
+     */
+    private function currentlyTracking()
+    {
+        $currentlyTracking = $this->logFiles[date('Y-m-d')]->data[ count($this->logFiles[date('Y-m-d')]->data)-1 ];
+        $currentlyTracking->length = $this->secondsToTime(time() - $currentlyTracking->time);
+        return $currentlyTracking;
     }
 
     /**
@@ -277,5 +332,17 @@ class TimeTracker
         if (!in_array($task, array('stop')) && !in_array($task, $this->tasksFile->data)) {
             $this->tasksFile->data[] = $task;
         }
+    }
+
+    public function secondsToTime($seconds)
+    {
+        $dtF = new DateTime("@0");
+        $dtT = new DateTime("@$seconds");
+        $format = '%H:%I:%S';
+
+        if ($seconds > 86400) {
+            $format = '%D days %H:%I:%S';
+        }
+        return $dtF->diff($dtT)->format($format);
     }
 }

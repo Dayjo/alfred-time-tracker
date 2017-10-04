@@ -1,3 +1,5 @@
 vendor
+.tags*
+
 output
 logs
