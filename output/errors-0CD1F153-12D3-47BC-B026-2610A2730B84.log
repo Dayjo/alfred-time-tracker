@@ -1,2 +1,0 @@
-
-Catchable fatal error: Argument 1 passed to Alfred\Workflow::runCommand() must be an instance of Alfred\Command, null given, called in /Users/joelday/Dev01/alfred-time-tracker/vendor/dayjo/alfred-workflow-helper/Alfred/Workflow.php on line 47 and defined in /Users/joelday/Dev01/alfred-time-tracker/vendor/dayjo/alfred-workflow-helper/Alfred/Workflow.php on line 56

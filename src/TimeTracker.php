@@ -20,7 +20,7 @@ class TimeTracker
     public function __construct()
     {
         // Grab the current log
-        $this->logFiles[date('Y-m-d')] = new JSON(__DIR__ . '/../logs/' . date('M Y') . '/log_' . date('Y-m-d') . '.json');
+        $this->logFiles[date('Y-m-d')] = new JSON(__DIR__ . '/../logs/' . date('Y') . '/' . date('M') .'/log_' . date('Y-m-d') . '.json');
         if (empty($this->logFiles[date('Y-m-d')]->data)) {
             $this->logFiles[date('Y-m-d')]->data = array();
         }
@@ -146,7 +146,7 @@ class TimeTracker
           [
             'prefix' => ':report',
             'command' => function ($input) {
-                $reports = ['weekly', 'monthly','yearly'];
+                $reports = ['monthly','yearly'];
                 // Create a new Item List
                 $List = new ItemList;
 
@@ -186,11 +186,92 @@ class TimeTracker
           [
             'prefix' => ':report',
             'command' => function ($input) {
-                $reports = ['weekly', 'monthly','yearly'];
+                $reports = ['monthly','yearly'];
 
                 // If running the command
                 if ($input) {
                     echo "Generating {$input} Report!";
+
+                    switch ($input) {
+                        case 'monthly':
+                            $reportName = date('Y-m');
+                            $logsDir = __DIR__ . '/../logs/' . date('Y') . '/' . date('M') . '/';
+                        break;
+
+                        case 'yearly':
+                            $reportName = date('Y');
+                            $logsDir = __DIR__ . '/../logs/' . date('Y') . '/';
+                        break;
+                    }
+
+                    // Get all the of the log files for the requested period
+                    $logFiles = $this->getDirContents($logsDir);
+
+                    // Sort them in date order
+                    usort($logFiles, function ($a, $b) {
+                        $aname = pathinfo($a, PATHINFO_FILENAME);
+                        $bname = pathinfo($b, PATHINFO_FILENAME);
+
+                        if ($aname > $bname) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    });
+                    $report = [];
+                    $reportText = '';
+                    // Loop through the logs, load them in and build the report
+                    foreach ($logFiles as $log) {
+                        $filename = pathinfo($log, PATHINFO_FILENAME);
+                        $day = str_replace('log_', '', $filename);
+                        $day = str_replace('.json', '', $day);
+
+                        $date = DateTime::createFromFormat('Y-m-d', $day);
+
+                        $file = new JSON($log);
+
+                        $report[$day] = [];
+                        $previousTime = 0;
+                        foreach ($file->data as $logItem) {
+                            // Add this item to the report
+                            $report[$day][] = $logItem;
+
+                            // Set the previous item's length
+                            if ($previousTime) {
+                                $report[$day][count($report[$day])-2]->length = $logItem->time - $previousTime;
+                            }
+
+
+                            $previousTime = $logItem->time;
+                        }
+                    }
+
+                    foreach ($report as $date => $day) {
+                        $date = DateTime::createFromFormat('Y-m-d', $date);
+                        $reportText .= "\n=============================\n";
+                        $reportText .= '# ' . $date->format("l jS \of F Y") . "\n\n";
+                        foreach ($day as $logItem) {
+                            $reportText .= '## ' . $logItem->task . "\n";
+
+                            if ($logItem->notes) {
+                                $reportText .= 'Notes: ' . $logItem->notes . " \n\n";
+                            }
+
+                            $reportText .= '* Started: ' . date('H:i:s', $logItem->time). "\n";
+
+                            if ($logItem->length) {
+                                $reportText .= '* Length: ' . $this->secondsToTime($logItem->length). "\n\n";
+                            } else {
+                                $reportText .= '* Unknown Length' . "\n\n";
+                            }
+                        }
+                    }
+
+                    file_put_contents(__DIR__ . '/../reports/'. $reportName . '.md', $reportText);
+
+                    echo $logsDir;
+                    var_dump($logs);
+                    print_r($logs);
                 }
             }
           ]
@@ -316,7 +397,9 @@ class TimeTracker
     private function currentlyTracking()
     {
         $currentlyTracking = $this->logFiles[date('Y-m-d')]->data[ count($this->logFiles[date('Y-m-d')]->data)-1 ];
-        $currentlyTracking->length = $this->secondsToTime(time() - $currentlyTracking->time);
+        if ($currentlyTracking) {
+            $currentlyTracking->length = $this->secondsToTime(time() - $currentlyTracking->time);
+        }
         return $currentlyTracking;
     }
 
@@ -334,7 +417,7 @@ class TimeTracker
         }
     }
 
-    public function secondsToTime($seconds)
+    public function secondsToTime(int $seconds)
     {
         $dtF = new DateTime("@0");
         $dtT = new DateTime("@$seconds");
@@ -344,5 +427,19 @@ class TimeTracker
             $format = '%D days %H:%I:%S';
         }
         return $dtF->diff($dtT)->format($format);
+    }
+
+    private function getDirContents($path)
+    {
+        $rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+
+        $files = array();
+        foreach ($rii as $file) {
+            if (!$file->isDir()) {
+                $files[] = $file->getPathname();
+            }
+        }
+
+        return $files;
     }
 }
