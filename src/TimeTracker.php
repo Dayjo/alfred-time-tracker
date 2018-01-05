@@ -190,7 +190,7 @@ class TimeTracker
 
                 // If running the command
                 if ($input) {
-                    echo "Generating {$input} Report!";
+                    // echo "Generating {$input} Report!";
 
                     switch ($input) {
                         case 'monthly':
@@ -273,7 +273,10 @@ class TimeTracker
                     }
 
                     // WRite the report
-                    return file_put_contents(__DIR__ . '/../reports/'. $reportName . '.md', $reportText);
+                    file_put_contents(__DIR__ . '/../reports/'. $reportName . '.md', $reportText);
+
+                    // Output the filename so that it opens
+                    echo __DIR__ . '/../reports/'. $reportName . '.md';
                 }
             }
           ]
@@ -296,6 +299,7 @@ class TimeTracker
                 }
 
                 $this->track($input);
+                echo "Started Tracking $input";
             }
           ]
         ));
@@ -314,7 +318,7 @@ class TimeTracker
         ));
 
         /**
-         * Add the command for generating reports
+         * Add the command for adding notes
          */
         $this->Workflow->addCommand(new Command(
           [
@@ -328,6 +332,8 @@ class TimeTracker
                         $log->notes = trim($notes);
                     }
                 }
+
+                echo "Added notes!";
             }
         ]));
     }
