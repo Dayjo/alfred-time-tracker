@@ -8,11 +8,11 @@ Simple time tracking workflow for keeping track of tasks.
 
 ## Installation
 
-Download `alfred-time-tracker.alfredworkflow` and open it with Alfred.
+Download `bin/alfred-time-tracker.alfredworkflow` and open it with Alfred.
 
 ## Updating
 
-Run `time :update` to update the time tracker. This will update the code within the workflow, as well as any dependencies using Composer.
+Run `tt :update` to update the time tracker. This will update the code within the workflow, as well as any dependencies using Composer.
 
 
 ## Usage
@@ -28,7 +28,7 @@ To stop tracking type `tt :stop`
 ### Adding a note to a task
 Sometimes you might be tracking lots of the same thing, but want to add notes to a specific task. Typing `tt :note` will bring up a list of the last logs, use the arrow keys to choose which task you which to write a note on and write the note, or hit tab to select it and then write the note.
 
-![](http://c.dayjo.me/4721272E462x/Screen%20Recording%202018-01-05%20at%2002.28%20pm.gif)
+![](http://c.dayjo.me/1j1v092a0s0z/Screen%20Recording%202018-01-05%20at%2002.38%20pm.gif)
 
 
 ### Generate Report
