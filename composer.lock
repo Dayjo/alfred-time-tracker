@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2aa057cecc90e157bd71c5343073ad41",
+    "content-hash": "82f9f29fca8c31f6aaec7418e605ebe2",
     "packages": [
         {
             "name": "dayjo/alfred-workflow-helper",
@@ -44,13 +44,39 @@
         },
         {
             "name": "dayjo/php-json-handler",
-            "version": "v1.0.11",
+            "version": "v1.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dayjo/php-json-handler.git",
-                "reference": "v1.0.11"
+                "reference": "7cb870ac3ce1273f1ad5f37a272b86b91910fb78"
             },
-            "type": "library"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Dayjo/php-json-handler/zipball/7cb870ac3ce1273f1ad5f37a272b86b91910fb78",
+                "reference": "7cb870ac3ce1273f1ad5f37a272b86b91910fb78",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dayjo\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joel Day",
+                    "email": "git@dayjo.me"
+                }
+            ],
+            "description": "Class for opening and writing to json files easily",
+            "support": {
+                "source": "https://github.com/Dayjo/php-json-handler/tree/v1.0.12",
+                "issues": "https://github.com/Dayjo/php-json-handler/issues"
+            },
+            "time": "2018-01-05T13:09:27+00:00"
         }
     ],
     "packages-dev": [],

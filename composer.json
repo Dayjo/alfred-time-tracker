@@ -13,18 +13,9 @@
             "type": "vcs",
             "url": "https://github.com/Dayjo/alfred-workflow-helper"
         },
-
         {
-            "type": "package",
-            "package": {
-                "name": "dayjo/php-json-handler",
-                "version": "v1.0.11",
-                "source": {
-                    "url": "https://github.com/Dayjo/php-json-handler.git",
-                    "type": "git",
-                    "reference": "v1.0.11"
-                }
-            }
+            "type": "vcs",
+            "url": "https://github.com/Dayjo/php-json-handler"
         }
     ],
     "require": {
