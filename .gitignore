@@ -1,5 +1,6 @@
 vendor
 .tags*
+.fuse*
 
 output
 logs
