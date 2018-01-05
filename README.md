@@ -3,6 +3,7 @@
 Simple time tracking workflow for keeping track of tasks.
 
 ## Prerequisites
+* Git (github, for pulling code updates)
 * PHP >= 7.0
 * [Composer](https://getcomposer.org/) (used for keeping up to date)
 
