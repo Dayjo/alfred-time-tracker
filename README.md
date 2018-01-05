@@ -3,8 +3,8 @@
 Simple time tracking workflow for keeping track of tasks.
 
 ## Prerequisites
-* Git (github, for pulling code updates)
 * PHP >= 7.0
+* Git (used for keeping up to date)
 * [Composer](https://getcomposer.org/) (used for keeping up to date)
 
 ## Installation
@@ -24,7 +24,9 @@ Special commands start with a colon i.e. `tt :stop` or `tt :report`, everything 
 To start tracking a task simply type: `tt <task-name>`. You should get a notification saying that the tracking has started.
 
 ### Stop Tracking
-To stop tracking type `tt :stop`
+To stop tracking type `tt :stop`.
+
+__Note;__ you don't need to stop tracking between tasks, you can track one, then start tracking another. You can only track one task at a time.
 
 ### Adding a note to a task
 Sometimes you might be tracking lots of the same thing, but want to add notes to a specific task. Typing `tt :note` will bring up a list of the last logs, use the arrow keys to choose which task you which to write a note on and write the note, or hit tab to select it and then write the note.
