@@ -3,4 +3,5 @@ vendor
 
 output
 logs
+logs/tasks.json
 reports
