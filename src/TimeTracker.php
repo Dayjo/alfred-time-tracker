@@ -267,11 +267,13 @@ class TimeTracker
                         }
                     }
 
-                    file_put_contents(__DIR__ . '/../reports/'. $reportName . '.md', $reportText);
+                    // Create the reports dir if it doesn't exist
+                    if (!file_exists(__DIR__ . '/../reports/')) {
+                        mkdir(__DIR__ . '/../reports/');
+                    }
 
-                    echo $logsDir;
-                    var_dump($logs);
-                    print_r($logs);
+                    // WRite the report
+                    return file_put_contents(__DIR__ . '/../reports/'. $reportName . '.md', $reportText);
                 }
             }
           ]
