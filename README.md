@@ -14,12 +14,27 @@ Download `bin/alfred-time-tracker.alfredworkflow` and open it with Alfred.
 
 ## Updating
 
-Run `tt :update` to update the time tracker. This will update the code within the workflow, as well as any dependencies using Composer.
+It's recommended that you run the update after installation as the binary may not have the exact latest codebase.
 
+Run `tt :update` to update the time tracker. This will update the code within the workflow, as well as any dependencies using Composer.
 
 ## Usage
 
-Special commands start with a colon i.e. `tt :stop` or `tt :report`, everything else will get tracked as a task.
+Special commands start with a colon i.e. `tt :config`, `tt :stop` or `tt :report`, everything else will get tracked as a task.
+
+### Configuring
+
+You can set config variables with `tt :config`, it should bring up a list of possible config variables to change, you can either type out the name of the config var, or hit tab on the list item and it should pre-fill, then simply type the new value.
+
+Alfred should display the current value of the config var in brackets.
+
+![](http://c.dayjo.me/0D0Y0v3V0F0u/Image%202018-01-09%20at%2011.27.04%20am.png);
+
+#### dayEnds
+Setting the `dayEnds` config to a time, will make the report calculate the last task of the day up until the specified time. For instance, if I set dayEnds to `18:00`, and my last task was started at `16:00`, if I forget to stop the task at the end of the day, it will calculate 2 hours of work for the report.
+
+Turning this off (`tt :config dayEnds false`) will mean that if you do not make sure that you stop your last task before you leave, it will not be able to calculate the number of hours for that last task.
+
 
 ### Tracking a Task
 To start tracking a task simply type: `tt <task-name>`. You should get a notification saying that the tracking has started.

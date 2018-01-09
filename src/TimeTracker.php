@@ -42,6 +42,7 @@ class TimeTracker
     public function getSearch()
     {
         // Itialise the commands
+        $this->Workflow->state = $this->Workflow::STATE_SEARCHING;
         $this->initTasks();
         $this->initCommands();
         $this->Workflow->run();
@@ -53,6 +54,7 @@ class TimeTracker
     public function getRun()
     {
         // Itialise the commands
+        $this->Workflow->state = $this->Workflow::STATE_RUNNING;
         $this->initRunTasks();
         $this->initRunReports();
         $this->Workflow->run();
