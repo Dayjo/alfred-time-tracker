@@ -65,5 +65,9 @@ Sometimes you might be tracking lots of the same thing, but want to add notes to
 
 ---
 
+### Today
+You can see a list of today's tasks by simply typing `tt :today` into Alfred, it will list out the logs it has and their lengths.
+
+
 ### Generate Report
 Typing `tt :report` will give you two options, monthly or yearly report. Both will generate a report based on the logs for the current year / month, and open a markdown file with the report in.
