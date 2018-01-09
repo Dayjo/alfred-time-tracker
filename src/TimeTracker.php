@@ -13,14 +13,9 @@ class TimeTracker
     private $Workflow;
     private $logFiles;
     private $tasksFile;
-    public $config;
     private $configTemplate = [
-        'dayEnds' => '18:00'
+        'dayEnds' => '18:00',
     ];
-
-    // const STATE_SEARCHING = 1;
-    // const STATE_RUNNING = 2;
-    // const STATE_CONFIGURING = 3;
 
     public function __construct()
     {
@@ -32,6 +27,7 @@ class TimeTracker
 
         // Grab all of the existing tasks
         $this->tasksFile = new JSON(__DIR__ . '/../logs/tasks.json');
+
         $this->Workflow = new Workflow($this->configTemplate, __DIR__ . '/../config/config.json');
     }
 
@@ -53,11 +49,29 @@ class TimeTracker
      */
     public function getRun()
     {
-        // Itialise the commands
         $this->Workflow->state = $this->Workflow::STATE_RUNNING;
         $this->initRunTasks();
         $this->initRunReports();
         $this->Workflow->run();
+    }
+
+    private function getLatestWorkflowVersion()
+    {
+        // First check for update
+        $request = file_get_contents("https://packagist.org/packages/dayjo/alfred-time-tracker.json");
+        $package = json_decode($request, 1);
+        $versions = $package['package']['versions'];
+        // exec('git describe --abbrev=0');
+        foreach ($versions as $v => $version) {
+            if ($v[0] != 'v') {
+                continue;
+            } else {
+                $latest = $v;
+                break;
+            }
+        }
+
+        return $latest;
     }
 
     /**
@@ -72,7 +86,7 @@ class TimeTracker
           [
             'prefix' => ':',
             'command' => function ($input) {
-                $commands = ['stop', 'report'];
+                $commands = ['stop', 'report', 'open'];
 
                 // Create a new Item List
                 $List = new ItemList;
@@ -119,6 +133,7 @@ class TimeTracker
                 echo $List->output();
             }
         ]));
+
 
         /**
          * Add the command for generating reports
@@ -244,11 +259,21 @@ class TimeTracker
 
                             // Set the previous item's length
                             if ($previousTime) {
-                                $report[$day][count($report[$day])-2]->length = $logItem->time - $previousTime;
+                                if ($logItem->time > $previousTime && $logItem->time - $previousTime) {
+                                    $report[$day][count($report[$day])-2]->length = $logItem->time - $previousTime;
+                                }
                             }
 
-
                             $previousTime = $logItem->time;
+                        }
+
+                        // Set the last item's length
+                        if ($previousTime) {
+                            if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
+                                $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
+                            } else {
+                                $report[$day][count($report[$day])-1]->length =  null;
+                            }
                         }
                     }
 
