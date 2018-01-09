@@ -192,6 +192,66 @@ class TimeTracker
             }
           ]
         ));
+
+
+
+        /**
+         * Add the command for listing todays logs
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':today',
+            'command' => function ($input) {
+                // Create a new Item List
+                $List = new ItemList;
+                $report = [];
+                $day = date('Y-m-d');
+                // Loop through todays logs
+                $report[$day] = [];
+                $previousTime = 0;
+                foreach ($this->logFiles[date('Y-m-d')]->data as $logItem) {
+                    // Add this item to the report
+                    $report[$day][] = $logItem;
+
+                    // Set the previous item's length
+                    if ($previousTime) {
+                        if ($logItem->time > $previousTime && $logItem->time - $previousTime) {
+                            $report[$day][count($report[$day])-2]->length = $logItem->time - $previousTime;
+                        }
+                    }
+
+                    $previousTime = $logItem->time;
+                }
+
+                // Set the last item's length
+                if ($previousTime) {
+                    if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
+                        $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
+                    } else {
+                        $report[$day][count($report[$day])-1]->length =  null;
+                    }
+                }
+
+
+                foreach ($report as $date => $day) {
+                    $date = DateTime::createFromFormat('Y-m-d', $date);
+                    $reportText .= "\n=============================\n";
+                    $reportText .= '# ' . $date->format("l jS \of F Y") . "\n\n";
+                    foreach ($day as $logItem) {
+                        // Add the new item to the list
+                        $List->add(new Item([
+                            'title' => $logItem->task . " (" . $this->secondsToTime($logItem->length) . ")",
+                            'arg' => '',
+                            'autocomplete' => ''])
+                        );
+                    }
+                }
+
+                // Output the list of tasks to
+                echo $List->output();
+            }
+
+        ]));
     }
 
     /**
@@ -442,6 +502,7 @@ class TimeTracker
         return $currentlyTracking;
     }
 
+
     /**
     * Write a log to today's log file
     * @param  string $text The task name to log
@@ -460,10 +521,10 @@ class TimeTracker
     {
         $dtF = new DateTime("@0");
         $dtT = new DateTime("@$seconds");
-        $format = '%H:%I:%S';
+        $format = '%h:%I:%S';
 
         if ($seconds > 86400) {
-            $format = '%D days %H:%I:%S';
+            $format = '%D days %h:%I:%S';
         }
         return $dtF->diff($dtT)->format($format);
     }
