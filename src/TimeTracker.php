@@ -223,14 +223,7 @@ class TimeTracker
                     $previousTime = $logItem->time;
                 }
 
-                // Set the last item's length
-                if ($previousTime) {
-                    if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
-                        $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
-                    } else {
-                        $report[$day][count($report[$day])-1]->length =  null;
-                    }
-                }
+
 
 
                 foreach ($report as $date => $day) {
@@ -240,7 +233,7 @@ class TimeTracker
                     foreach ($day as $logItem) {
                         // Add the new item to the list
                         $List->add(new Item([
-                            'title' => $logItem->task . " (" . $this->secondsToTime($logItem->length) . ")",
+                            'title' => $logItem->task .  " (" . ($logItem->length ?  $this->secondsToTime($logItem->length) : 'on going...') . ")",
                             'arg' => '',
                             'autocomplete' => ''])
                         );
