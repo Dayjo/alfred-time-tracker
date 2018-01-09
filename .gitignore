@@ -4,5 +4,5 @@ vendor
 
 output
 logs
-logs/tasks.json
+config
 reports

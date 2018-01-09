@@ -13,9 +13,14 @@ class TimeTracker
     private $Workflow;
     private $logFiles;
     private $tasksFile;
+    public $config;
+    private $configTemplate = [
+        'dayEnds' => '18:00'
+    ];
 
-    const STATE_SEARCHING = 1;
-    const STATE_RUNNING = 1;
+    // const STATE_SEARCHING = 1;
+    // const STATE_RUNNING = 2;
+    // const STATE_CONFIGURING = 3;
 
     public function __construct()
     {
@@ -27,6 +32,7 @@ class TimeTracker
 
         // Grab all of the existing tasks
         $this->tasksFile = new JSON(__DIR__ . '/../logs/tasks.json');
+        $this->Workflow = new Workflow($this->configTemplate, __DIR__ . '/../config/config.json');
     }
 
     /**
@@ -35,8 +41,7 @@ class TimeTracker
      */
     public function getSearch()
     {
-        $this->state = static::STATE_SEARCHING;
-        $this->Workflow = new Workflow();
+        // Itialise the commands
         $this->initTasks();
         $this->initCommands();
         $this->Workflow->run();
@@ -47,8 +52,7 @@ class TimeTracker
      */
     public function getRun()
     {
-        $this->state = static::STATE_RUNNING;
-        $this->Workflow = new Workflow();
+        // Itialise the commands
         $this->initRunTasks();
         $this->initRunReports();
         $this->Workflow->run();
