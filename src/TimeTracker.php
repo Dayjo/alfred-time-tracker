@@ -233,7 +233,7 @@ class TimeTracker
                     foreach ($day as $logItem) {
                         // Add the new item to the list
                         $List->add(new Item([
-                            'title' => $logItem->task .  " (" . ($logItem->length ?  $this->secondsToTime($logItem->length) : 'on going...') . ")",
+                            'title' => $logItem->task .  " (" . ($logItem->length > 1 ?  $this->secondsToTime($logItem->length) : 'on going...') . ")",
                             'arg' => '',
                             'autocomplete' => ''])
                         );
