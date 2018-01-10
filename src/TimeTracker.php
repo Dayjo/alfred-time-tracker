@@ -272,13 +272,39 @@ class TimeTracker
         ]));
     }
 
+    /**
+     * Backs up all logs into yearly gists
+     * @return [type] [description]
+     */
     private function backupLogs()
     {
+        $years = scandir(__DIR__ . '/../logs/');
+        foreach ($years as $year) {
+            $logs = $this->getDirContents(__DIR__ . '/../logs/' . $year . '/');
+        }
+        $backup = [];
+        foreach ($logs as $fname) {
+            $backup[$fname] = ['content' => file_get_contents($fname)];
+        }
+
+
+        exit;
+        /* Loop through all log directories */
+
         $githubClient = new \Github\Client();
         $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
 
-        $repositories = $githubClient->api('gists')->all('private');
-        var_dump($repositories);
+        // Create a new gist
+        $data = array(
+            'files' => $backup,
+            'public' => false,
+            'description' => 'Backup of Time Tracker logs as of ' . date('Y-m-d H:i:s')
+        );
+
+        $gist = $github->api('gists')->create($data);
+        echo "Backed up!";
+        var_dump($gist);
+
         exit;
     }
 
@@ -453,6 +479,18 @@ class TimeTracker
                 }
 
                 echo "Added notes!";
+            }
+        ]));
+
+
+        /**
+         * Add the command for adding notes
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':backup',
+            'command' => function ($input) {
+                echo $this->backupLogs();
             }
         ]));
     }
