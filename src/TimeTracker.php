@@ -278,12 +278,8 @@ class TimeTracker
      */
     private function backupLogs()
     {
-        $years = scandir(__DIR__ . '/../logs/');
-        foreach ($years as $year) {
-            if (is_dir(__DIR__ . '/../logs/' . $year) && !in_array($year, ['.','..'])) {
-                $logs[$year] = $this->getDirContents(__DIR__ . '/../logs/' . $year . '/');
-            }
-        }
+        $logs[$year] = $this->getDirContents(__DIR__ . '/../logs/');
+
 
         $backup = [];
         foreach ($logs as $year) {
