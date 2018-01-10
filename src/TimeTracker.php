@@ -111,7 +111,13 @@ class TimeTracker
                         'title' => "Backup your time logs",
                         'arg' => ":backup",
                         'autocomplete' => ":backup"
+                    ],
+                    'today'=> [
+                        'title' => "Todays logs",
+                        'arg' => ":today",
+                        'autocomplete' => ":today"
                     ]
+
                 ];
 
                 // Create a new Item List
@@ -258,8 +264,8 @@ class TimeTracker
                 // Add the new item to the list
                 $List->add(new Item([
                     'title' => "Todays Logs",
-                    'arg' => '',
-                    'autocomplete' => ''])
+                    'arg' => ':today',
+                    'autocomplete' => ':today'])
                 );
 
                 foreach ($report as $date => $day) {
@@ -270,8 +276,8 @@ class TimeTracker
                         // Add the new item to the list
                         $List->add(new Item([
                             'title' => $logItem->task .  " (" . ($logItem->length > 1 ?  $this->secondsToTime($logItem->length) : 'on going...') . ")",
-                            'arg' => '',
-                            'autocomplete' => ''])
+                            'arg' => ':today',
+                            'autocomplete' => ':today'])
                         );
                     }
                 }
