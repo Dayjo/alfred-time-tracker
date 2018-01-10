@@ -111,6 +111,15 @@ class TimeTracker
                     }
                 }
 
+                // Add the currently tracked item
+                $currentlyTracking = $this->currentlyTracking();
+                $List->add(new Item([
+                    'title' => "Currently Tracking {$currentlyTracking->task} {$currentlyTracking->length}",
+                    'arg' => '',
+                    'valid' => false
+                ]));
+
+
 
                 // Output the list of tasks to
                 echo $List->output();
