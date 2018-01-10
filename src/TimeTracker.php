@@ -280,11 +280,16 @@ class TimeTracker
     {
         $years = scandir(__DIR__ . '/../logs/');
         foreach ($years as $year) {
-            $logs = $this->getDirContents(__DIR__ . '/../logs/' . $year . '/');
+            if (is_dir(__DIR__ . '/../logs/' . $year)) {
+                $logs[$year] = $this->getDirContents(__DIR__ . '/../logs/' . $year . '/');
+            }
         }
+        
         $backup = [];
-        foreach ($logs as $fname) {
-            $backup[$fname] = ['content' => file_get_contents($fname)];
+        foreach ($logs as $year) {
+            foreach ($year as $fname) {
+                $backup[$fname] = ['content' => file_get_contents($fname)];
+            }
         }
 
 
