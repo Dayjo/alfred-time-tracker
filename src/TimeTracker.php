@@ -306,7 +306,7 @@ class TimeTracker
 
         $gist = $githubClient->api('gists')->create($data);
 
-        echo $gist['url']
+        echo $gist['url'];
     }
 
     /**
