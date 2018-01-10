@@ -292,8 +292,6 @@ class TimeTracker
             }
         }
 
-        var_dump($backup);
-
         /* Loop through all log directories */
 
         $githubClient = new \Github\Client();
@@ -307,10 +305,8 @@ class TimeTracker
         );
 
         $gist = $githubClient->api('gists')->create($data);
-        echo "Backed up!";
-        var_dump($gist);
 
-        exit;
+        echo $gist['url']
     }
 
     /**
