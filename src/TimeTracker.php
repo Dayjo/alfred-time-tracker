@@ -15,6 +15,7 @@ class TimeTracker
     private $tasksFile;
     private $configTemplate = [
         'dayEnds' => '18:00',
+        'gistAccessToken' => '807gfqpgewgfag78esu0seaf7e'
     ];
 
     public function __construct()
@@ -40,7 +41,9 @@ class TimeTracker
     public function getSearch()
     {
         $githubClient = new \Github\Client();
-        $repositories = $githubClient->api('user')->repositories('dayjo');
+        $githubClient->authenticate($this->Workflow->config->gistAccessToken);
+
+        $repositories = $githubClient->api('gists')->show(1);
         var_dump($repositories);
         exit;
 
