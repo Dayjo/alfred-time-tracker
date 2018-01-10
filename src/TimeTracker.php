@@ -306,7 +306,7 @@ class TimeTracker
             'description' => 'Backup of Time Tracker logs as of ' . date('Y-m-d H:i:s')
         );
 
-        $gist = $github->api('gists')->create($data);
+        $gist = $githubClient->api('gists')->create($data);
         echo "Backed up!";
         var_dump($gist);
 
