@@ -15,6 +15,7 @@ class TimeTracker
     private $tasksFile;
     private $configTemplate = [
         'dayEnds' => '18:00',
+        'gistAccessToken' => '807gfqpgewgfag78esu0seaf7e'
     ];
 
     public function __construct()
@@ -24,6 +25,8 @@ class TimeTracker
         if (empty($this->logFiles[date('Y-m-d')]->data)) {
             $this->logFiles[date('Y-m-d')]->data = array();
         }
+
+
 
         // Grab all of the existing tasks
         $this->tasksFile = new JSON(__DIR__ . '/../logs/tasks.json');
@@ -37,6 +40,7 @@ class TimeTracker
      */
     public function getSearch()
     {
+
         // Itialise the commands
         $this->Workflow->state = $this->Workflow::STATE_SEARCHING;
         $this->initTasks();
@@ -86,7 +90,7 @@ class TimeTracker
           [
             'prefix' => ':',
             'command' => function ($input) {
-                $commands = ['stop', 'report', 'open'];
+                $commands = ['stop', 'report', 'open', 'backup'];
 
                 // Create a new Item List
                 $List = new ItemList;
@@ -245,6 +249,67 @@ class TimeTracker
             }
 
         ]));
+
+        /**
+         * Add the command for backing up logs
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':backup',
+            'command' => function ($input) {
+                // Create a new Item List
+                $List = new ItemList;
+
+                $List->add(new Item([
+                    'title' => "Backup your time logs",
+                    'arg' => ':backup',
+                    'autocomplete' => ':backup'])
+                );
+                // Output the list of tasks to
+                echo $List->output();
+            }
+
+        ]));
+    }
+
+    /**
+     * Backs up all logs into yearly gists
+     * @return [type] [description]
+     */
+    private function backupLogs()
+    {
+        $logs[$year] = $this->getDirContents(__DIR__ . '/../logs/');
+
+
+        $backup = [];
+        foreach ($logs as $year) {
+            foreach ($year as $fname) {
+                $backup[basename($fname)] = ['content' => file_get_contents($fname)];
+            }
+        }
+
+        /* Loop through all log directories */
+
+        $githubClient = new \Github\Client();
+        $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
+
+        // Create a new gist
+        $data = array(
+            'files' => $backup,
+            'public' => false,
+            'description' => 'Backup of Time Tracker logs as of ' . date('Y-m-d H:i:s')
+        );
+
+        // First check to see if we already have a backup gist.
+        if (empty($this->Workflow->config->backupGistId)) {
+            $gist = $githubClient->api('gists')->create($data);
+            $this->Workflow->config->backupGistId = $gist['id'];
+        } else {
+            $gist = $githubClient->api('gists')->update($this->Workflow->config->backupGistId, $data);
+        }
+
+
+        echo $gist['html_url'];
     }
 
     /**
@@ -418,6 +483,18 @@ class TimeTracker
                 }
 
                 echo "Added notes!";
+            }
+        ]));
+
+
+        /**
+         * Add the command for adding notes
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':backup',
+            'command' => function ($input) {
+                echo $this->backupLogs();
             }
         ]));
     }
