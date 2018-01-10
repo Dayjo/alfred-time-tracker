@@ -284,7 +284,7 @@ class TimeTracker
                 $logs[$year] = $this->getDirContents(__DIR__ . '/../logs/' . $year . '/');
             }
         }
-        
+
         $backup = [];
         foreach ($logs as $year) {
             foreach ($year as $fname) {
@@ -292,8 +292,8 @@ class TimeTracker
             }
         }
 
+        var_dump($backup);
 
-        exit;
         /* Loop through all log directories */
 
         $githubClient = new \Github\Client();
