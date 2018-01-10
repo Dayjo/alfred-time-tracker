@@ -40,12 +40,6 @@ class TimeTracker
      */
     public function getSearch()
     {
-        $githubClient = new \Github\Client();
-        $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
-
-        $repositories = $githubClient->api('gists')->show(1);
-        var_dump($repositories);
-        exit;
 
         // Itialise the commands
         $this->Workflow->state = $this->Workflow::STATE_SEARCHING;
@@ -96,7 +90,7 @@ class TimeTracker
           [
             'prefix' => ':',
             'command' => function ($input) {
-                $commands = ['stop', 'report', 'open'];
+                $commands = ['stop', 'report', 'open', 'backup'];
 
                 // Create a new Item List
                 $List = new ItemList;
@@ -255,6 +249,35 @@ class TimeTracker
             }
 
         ]));
+
+        /**
+         * Add the command for backing up logs
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':backup',
+            'command' => function ($input) {
+                // Create a new Item List
+                $List = new ItemList;
+
+                $List->add(new Item([
+                    'title' => "Backup your time logs",
+                    'arg' => ':backup',
+                    'autocomplete' => ':backup'])
+                );
+                // Output the list of tasks to
+                echo $List->output();
+            }
+
+        ]));
+
+
+        $githubClient = new \Github\Client();
+        $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
+
+        $repositories = $githubClient->api('gists')->all('private');
+        var_dump($repositories);
+        exit;
     }
 
     /**
