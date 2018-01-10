@@ -41,7 +41,7 @@ class TimeTracker
     public function getSearch()
     {
         $githubClient = new \Github\Client();
-        $githubClient->authenticate($this->Workflow->config->gistAccessToken);
+        $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
 
         $repositories = $githubClient->api('gists')->show(1);
         var_dump($repositories);
