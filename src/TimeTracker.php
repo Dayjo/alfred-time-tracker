@@ -18,7 +18,7 @@ class TimeTracker
     ];
 
     private $logPath       = __DIR__  . '/../logs/';
-    private $reportsPath   = __DIR__  . '/../reports/';
+    private $reportPath   = __DIR__  . '/../reports/';
     private $configPath    = __DIR__  . '/../config/';
 
     public function __construct()
@@ -255,7 +255,12 @@ class TimeTracker
                 }
 
 
-
+                // Add the new item to the list
+                $List->add(new Item([
+                    'title' => "Todays Logs",
+                    'arg' => '',
+                    'autocomplete' => ''])
+                );
 
                 foreach ($report as $date => $day) {
                     $date = DateTime::createFromFormat('Y-m-d', $date);
