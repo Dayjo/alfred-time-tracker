@@ -65,9 +65,21 @@ Sometimes you might be tracking lots of the same thing, but want to add notes to
 
 ---
 
+### Backup
+You can manually backup the time logs and tasks list to a Github Gist using `tt :backup`. But first you will need to set the `gistAccessToken` config variable.
+
+1. First create a Github Access Token by going to https://github.com/settings/tokens
+2. Click Personal access tokens.
+3. Create one and copy the token you're given.
+
+Then run `tt :config gistAccessToken <access-token>` to set it. You can now run `tt :backup` which will generate a gist with all of your time logs in. It will open the gist in your default browser. Each time you backup it will attempt to update the existing gist as a revision, however if somehow your config gets lost, then the id of the gist will be lost too so a new one will be created once again.
+
+---
+
 ### Today
 You can see a list of today's tasks by simply typing `tt :today` into Alfred, it will list out the logs it has and their lengths.
 
+---
 
 ### Generate Report
 Typing `tt :report` will give you two options, monthly or yearly report. Both will generate a report based on the logs for the current year / month, and open a markdown file with the report in.
