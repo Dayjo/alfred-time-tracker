@@ -313,7 +313,7 @@ class TimeTracker
         }
 
 
-        echo $gist['url'];
+        echo $gist['html_url'];
     }
 
     /**
