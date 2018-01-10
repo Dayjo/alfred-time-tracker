@@ -91,23 +91,40 @@ class TimeTracker
           [
             'prefix' => ':',
             'command' => function ($input) {
-                $commands = ['stop', 'report', 'open', 'backup'];
+                $commands = [
+                    'stop' => [
+                        'title' => "Stop Tracking",
+                        'arg' => ":stop",
+                        'autocomplete' => ":stop"
+                    ],
+                    'report' => [
+                        'title' => "Generate a Report",
+                        'arg' => ":report",
+                        'autocomplete' => ":report"
+                    ],
+                    'open'=> [
+                        'title' => "Open Workflow Folder",
+                        'arg' => ":open",
+                        'autocomplete' => ":open"
+                    ],
+                    'backup'=> [
+                        'title' => "Backup your time logs",
+                        'arg' => ":backup",
+                        'autocomplete' => ":backup"
+                    ]
+                ];
 
                 // Create a new Item List
                 $List = new ItemList;
 
                 // Loop through all of the existing task names
-                foreach ($commands as $cmd) {
+                foreach ($commands as $cmd => $item) {
 
                     // If the input matches the task name, output the task
                     if (trim($input) == '' || (stristr($cmd, $input) && $cmd != $input)) {
 
                         // Add the new item to the list
-                        $List->add(new Item([
-                            'title' => $cmd,
-                            'arg' => ":{$cmd}",
-                            'autocomplete' => ":". $cmd])
-                        );
+                        $List->add(new Item($item));
                     }
                 }
 
