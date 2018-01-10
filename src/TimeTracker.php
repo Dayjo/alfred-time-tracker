@@ -288,7 +288,7 @@ class TimeTracker
         $backup = [];
         foreach ($logs as $year) {
             foreach ($year as $fname) {
-                $backup[$fname] = ['content' => file_get_contents($fname)];
+                $backup[basename($fname)] = ['content' => file_get_contents($fname)];
             }
         }
 
