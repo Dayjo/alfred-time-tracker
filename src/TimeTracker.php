@@ -305,11 +305,11 @@ class TimeTracker
         );
 
         // First check to see if we already have a backup gist.
-        if (empty($this->Workflow->config['backupGistId'])) {
+        if (empty($this->Workflow->config->backupGistId)) {
             $gist = $githubClient->api('gists')->create($data);
-            $this->Workflow->config['backupGistId'] = $gist['id'];
+            $this->Workflow->config->backupGistId = $gist['id'];
         } else {
-            $gist = $githubClient->api('gists')->update($this->Workflow->config['backupGistId'], $data);
+            $gist = $githubClient->api('gists')->update($this->Workflow->config->backupGistId, $data);
         }
 
 
