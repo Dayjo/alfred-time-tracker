@@ -10,6 +10,8 @@
     ],
     "require": {
         "dayjo/alfred-workflow-helper": "v0.*.*",
-        "dayjo/php-json-handler": "v1.0.*"
+        "dayjo/php-json-handler": "v1.0.*",
+        "knplabs/github-api": "^2.7",
+        "php-http/guzzle6-adapter": "^1.1"
     }
 }

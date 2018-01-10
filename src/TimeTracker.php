@@ -25,6 +25,8 @@ class TimeTracker
             $this->logFiles[date('Y-m-d')]->data = array();
         }
 
+
+
         // Grab all of the existing tasks
         $this->tasksFile = new JSON(__DIR__ . '/../logs/tasks.json');
 
@@ -37,6 +39,11 @@ class TimeTracker
      */
     public function getSearch()
     {
+        $githubClient = new \Github\Client();
+        $repositories = $client->api('user')->repositories('dayjo');
+        var_dump($repositories);
+        exit;
+
         // Itialise the commands
         $this->Workflow->state = $this->Workflow::STATE_SEARCHING;
         $this->initTasks();
