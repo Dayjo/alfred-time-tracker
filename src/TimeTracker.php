@@ -7,7 +7,6 @@ use Dayjo\JSON as JSON;
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
-
 class TimeTracker
 {
     private $Workflow;
@@ -15,23 +14,25 @@ class TimeTracker
     private $tasksFile;
     private $configTemplate = [
         'dayEnds' => '18:00',
-        'gistAccessToken' => '807gfqpgewgfag78esu0seaf7e'
+        'gistAccessToken' => null
     ];
+
+    private $logPath       = __DIR__  . '/../logs/';
+    private $reportsPath   = __DIR__  . '/../reports/';
+    private $configPath    = __DIR__  . '/../config/';
 
     public function __construct()
     {
         // Grab the current log
-        $this->logFiles[date('Y-m-d')] = new JSON(__DIR__ . '/../logs/' . date('Y') . '/' . date('M') .'/log_' . date('Y-m-d') . '.json');
+        $this->logFiles[date('Y-m-d')] = new JSON($this->logPath . date('Y') . '/' . date('M') .'/log_' . date('Y-m-d') . '.json');
         if (empty($this->logFiles[date('Y-m-d')]->data)) {
             $this->logFiles[date('Y-m-d')]->data = array();
         }
 
-
-
         // Grab all of the existing tasks
-        $this->tasksFile = new JSON(__DIR__ . '/../logs/tasks.json');
+        $this->tasksFile = new JSON($this->logPath . 'tasks.json');
 
-        $this->Workflow = new Workflow($this->configTemplate, __DIR__ . '/../config/config.json');
+        $this->Workflow = new Workflow($this->configTemplate, $this->configPath . '/config.json');
     }
 
     /**
@@ -278,7 +279,7 @@ class TimeTracker
      */
     private function backupLogs()
     {
-        $logs[$year] = $this->getDirContents(__DIR__ . '/../logs/');
+        $logs[$year] = $this->getDirContents($this->logPath);
 
 
         $backup = [];
@@ -334,12 +335,12 @@ class TimeTracker
                     switch ($input) {
                         case 'monthly':
                             $reportName = date('Y-m');
-                            $logsDir = __DIR__ . '/../logs/' . date('Y') . '/' . date('M') . '/';
+                            $logsDir = $this->logPath . date('Y') . '/' . date('M') . '/';
                         break;
 
                         case 'yearly':
                             $reportName = date('Y');
-                            $logsDir = __DIR__ . '/../logs/' . date('Y') . '/';
+                            $logsDir = $this->logPath . date('Y') . '/';
                         break;
                     }
 
@@ -417,15 +418,15 @@ class TimeTracker
                     }
 
                     // Create the reports dir if it doesn't exist
-                    if (!file_exists(__DIR__ . '/../reports/')) {
-                        mkdir(__DIR__ . '/../reports/');
+                    if (!file_exists($this->reportPath)) {
+                        mkdir($this->reportPath);
                     }
 
                     // WRite the report
-                    file_put_contents(__DIR__ . '/../reports/'. $reportName . '.md', $reportText);
+                    file_put_contents($this->reportPath. $reportName . '.md', $reportText);
 
                     // Output the filename so that it opens
-                    echo __DIR__ . '/../reports/'. $reportName . '.md';
+                    echo $this->reportPath. $reportName . '.md';
                 }
             }
           ]
@@ -515,7 +516,7 @@ class TimeTracker
                 }
 
                 // Load in the tasks json
-                $JSON = new JSON(__dir__ . '/../logs/tasks.json');
+                $JSON = new JSON($this->logPath . 'tasks.json');
                 $tasks =& $JSON->data;
 
                 // Create a new Item List
