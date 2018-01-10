@@ -270,8 +270,10 @@ class TimeTracker
             }
 
         ]));
+    }
 
-
+    private function backupLogs()
+    {
         $githubClient = new \Github\Client();
         $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
 
