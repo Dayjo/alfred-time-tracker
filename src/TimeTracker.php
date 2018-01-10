@@ -40,7 +40,7 @@ class TimeTracker
     public function getSearch()
     {
         $githubClient = new \Github\Client();
-        $repositories = $client->api('user')->repositories('dayjo');
+        $repositories = $githubClient->api('user')->repositories('dayjo');
         var_dump($repositories);
         exit;
 
