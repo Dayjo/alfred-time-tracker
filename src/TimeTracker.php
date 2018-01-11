@@ -775,7 +775,7 @@ class TimeTracker
      * Return the currently tracked task
      * @return
      */
-    private function currentlyTracking()
+    public function currentlyTracking()
     {
         $currentlyTracking = $this->logFiles[date('Y-m-d')]->data[ count($this->logFiles[date('Y-m-d')]->data)-1 ];
         if ($currentlyTracking) {
