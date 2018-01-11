@@ -605,6 +605,7 @@ class TimeTracker
           [
             'prefix' => ':reporting',
             'command' => function ($input) {
+                echo "GOT IN HERE "  . $input;
                 switch (strtolower($input)) {
                     case 'start':
                         echo "Starting server..";
