@@ -122,8 +122,21 @@ class TimeTracker
                         'arg'   => ':clearTasks',
                         'autocomplete' => ':clearTasks',
                         'subtitle' => "This will reset any task names you autocomplete."
-                    ]
+                    ],
 
+                    'reportingStart' => [
+                        'title' => "Start Reporting Server",
+                        'arg'   => ':startReporting',
+                        'autocomplete' => ':startReporting',
+                        'subtitle' => "Start or stop the reporting server"
+                    ],
+
+                    'reportingStop' => [
+                        'title' => "Stop Reporting Server",
+                        'arg'   => ':stopReporting',
+                        'autocomplete' => ':stopReporting',
+                        'subtitle' => "Start or stop the reporting server"
+                    ]
                 ];
 
                 // Create a new Item List
@@ -373,7 +386,6 @@ class TimeTracker
             $gist = $githubClient->api('gists')->update($this->Workflow->config->backupGistId, $data);
         }
 
-
         echo $gist['html_url'];
     }
 
@@ -599,7 +611,7 @@ class TimeTracker
 
 
         /**
-         * Add the command for adding notes
+         * Add the command for backing up logs
          */
         $this->Workflow->addCommand(new Command(
           [
@@ -610,13 +622,32 @@ class TimeTracker
         ]));
 
         /**
-         * Add the command for adding notes
+         * Add the command for clearing tasks
          */
         $this->Workflow->addCommand(new Command(
           [
             'prefix' => ':clearTasks',
             'command' => function ($input) {
                 $this->clearTasks();
+            }
+        ]));
+
+        /**
+         * Add the command for starting report server
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':reporting',
+            'command' => function ($input) {
+                switch ($input) {
+                    case 'start':
+                        $this->startReportingServer();
+                    break;
+
+                    case 'stop':
+                        $this->stopReportingServer();
+                    break;
+                }
             }
         ]));
     }
@@ -744,5 +775,17 @@ class TimeTracker
         }
 
         return $files;
+    }
+
+    private function startReportingServer()
+    {
+        $cmd = 'php -S localhost:8000 -t "${PWD}/alfred-time-tracker/reporting"';
+        echo exec($cmd);
+    }
+
+    private function stopReportingServer()
+    {
+        $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep php | awk \'{print $1}\')';
+        echo exec($cmd);
     }
 }
