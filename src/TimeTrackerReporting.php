@@ -10,6 +10,6 @@ class TimeTrackerReporting extends TimeTracker
      */
     public function initReporting()
     {
-        $this->generateReport();
+        $this->generateReport('yearly');
     }
 }

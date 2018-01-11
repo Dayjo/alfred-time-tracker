@@ -449,7 +449,7 @@ class TimeTracker
      * [private description]
      * @var [type]
      */
-    private function generateReport(string $type)
+    protected function generateReport(string $type)
     {
         $report = [];
         $reportText = '';
