@@ -400,6 +400,8 @@ class TimeTracker
             $this->logFiles[date('Y-m-d')] = new JSON($this->logPath . date('Y', strtotime($date)) . '/' . date('M', strtotime($date)) .'/log_' . date('Y-m-d', strtotime($date)) . '.json');
         }
 
+        // Let's just go and make sure the 'lengths' are correct
+
         return $this->logFiles[date('Y-m-d')];
     }
 
@@ -488,7 +490,7 @@ class TimeTracker
 
             $date = DateTime::createFromFormat('Y-m-d', $day);
 
-            $file = new JSON($log);
+            $file = $this->getLog($date); //$this->logFiles[$date] = new JSON($log);
 
             $report[$day] = [];
             $previousTime = 0;

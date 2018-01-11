@@ -8,6 +8,8 @@ include "../src/TimeTrackerReporting.php";
 $reporting = new TimeTrackerReporting;
 $currentlyTracking =$reporting->currentlyTracking();
 $today = $reporting->getLog(date("Y-m-d"));
+
+$reporting->generateReport();
 ?>
 
 <!DOCTYPE html>
@@ -30,10 +32,16 @@ $today = $reporting->getLog(date("Y-m-d"));
         <h2>Today:</h2>
 
         <?php
+        $lastTime = null;
             foreach ($today->data as $task):
+
                 ?>
                 <p>
                 <strong>
+                    <?=date('H:i:s', $task->time);?>
+                     -&gt;
+
+                     <?=date('H:i:s', $task->time + $task->length);?>
                     (<?=$reporting->secondsToTime($task->length);?>)
                     <?=$task->task;?>
                 </strong>
