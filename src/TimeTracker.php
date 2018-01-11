@@ -124,17 +124,10 @@ class TimeTracker
                         'subtitle' => "This will reset any task names you autocomplete."
                     ],
 
-                    'startReporting' => [
-                        'title' => "Start Reporting Server",
-                        'arg'   => ':startReporting',
-                        'autocomplete' => ':startReporting',
-                        'subtitle' => "Start or stop the reporting server"
-                    ],
-
-                    'stopReporting' => [
-                        'title' => "Stop Reporting Server",
-                        'arg'   => ':stopReporting',
-                        'autocomplete' => ':stopReporting',
+                    'reporting' => [
+                        'title' => "Reporting Server",
+                        'arg'   => ':reporting',
+                        'autocomplete' => ':reporting',
                         'subtitle' => "Start or stop the reporting server"
                     ]
                 ];
@@ -561,20 +554,17 @@ class TimeTracker
          */
         $this->Workflow->addCommand(new Command(
           [
-            'prefix' => ':startReporting',
+            'prefix' => ':reporting',
             'command' => function ($input) {
-                $this->startReportingServer();
-            }
-        ]));
+                switch ($input) {
+                    case 'start':
+                        $this->startReportingServer();
+                    break;
 
-        /**
-         * Add the command for stopping report server
-         */
-        $this->Workflow->addCommand(new Command(
-          [
-            'prefix' => ':stopReporting',
-            'command' => function ($input) {
-                $this->stopReportingServer();
+                    case 'stop':
+                        $this->stopReportingServer();
+                    break;
+                }
             }
         ]));
     }
