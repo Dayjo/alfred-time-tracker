@@ -6,10 +6,9 @@ include "../src/TimeTracker.php";
 include "../src/TimeTrackerReporting.php";
 
 $reporting = new TimeTrackerReporting;
+$reporting->initReporting();
 $currentlyTracking =$reporting->currentlyTracking();
 $today = $reporting->getLog(date("Y-m-d"));
-
-$reporting->generateReport();
 ?>
 
 <!DOCTYPE html>
