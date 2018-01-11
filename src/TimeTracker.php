@@ -598,6 +598,9 @@ class TimeTracker
 
     public function initRunTasks()
     {
+
+
+
         /**
          * Add the command for starting report server
          */
@@ -822,7 +825,7 @@ class TimeTracker
 
     private function startReportingServer()
     {
-        $cmd = 'php -S localhost:8000 -t "${PWD}/alfred-time-tracker/reporting"';
+        $cmd = 'nohup php -S localhost:8000 -t "${PWD}/alfred-time-tracker/reporting" > /dev/null 2>&1 &';
         echo exec($cmd);
     }
 
