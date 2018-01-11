@@ -571,12 +571,10 @@ class TimeTracker
             }
 
 
-            echo $gist['html_url'];
-            return;
+            return $gist['html_url'];
         }
 
-        echo $this->reportPath. $reportName . '.md';
-        return;
+        return $this->reportPath. $reportName . '.md';
     }
 
     /**
@@ -604,7 +602,7 @@ class TimeTracker
         //             switch ($input) {
         //                 case 'monthly':
         //                 case 'yearly':
-        //                     $this->generateReport($input);
+        //                     echo $this->generateReport($input);
         //                 break;
         //
         //             }
