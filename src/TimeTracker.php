@@ -621,15 +621,15 @@ class TimeTracker
         ]));
     }
 
+
     /**
-     * Delete the tasks file
+     * Empty the tasks file
      * @return
      */
     private function clearTasks()
     {
-        echo "Deleting " . $this->logPath . 'tasks.json.';
-        unlink($this->logPath . 'tasks.json');
-        echo PHP_EOL . "Tasks file deleted";
+        $this->tasksFile->data = [];
+        echo "Cleared existing task names";
     }
 
     /**
