@@ -6,7 +6,8 @@ include "../src/TimeTracker.php";
 include "../src/TimeTrackerReporting.php";
 
 $reporting = new TimeTrackerReporting;
-
+$currentlyTracking =$reporting->currentlyTracking();
+$today = $reporting->getLog(date("Y-m-d"));
 ?>
 
 <!DOCTYPE html>
@@ -16,6 +17,20 @@ $reporting = new TimeTrackerReporting;
         <title></title>
     </head>
     <body>
-        <h2>Currently Tracking: <?=$reporting->currentlyTracking()->task;?></h2>
+        <h2>
+            Currently Tracking:
+        </h2>
+        <strong>
+            (<?=$currentlyTracking->length?>)
+            <?=$currentlyTracking->task;?>
+        </strong>
+        <em><?=$currentlyTracking->notes;?></em>
+
+
+        <h2>Today:</h2>
+
+        <?php
+            var_dump($today);
+        ?>
     </body>
 </html>

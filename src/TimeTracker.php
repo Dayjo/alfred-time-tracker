@@ -390,6 +390,20 @@ class TimeTracker
     }
 
     /**
+     * Function to get a log for a specific date.
+     * @param  String $date [description]
+     * @return [type]       [description]
+     */
+    public function getLog(String $date)
+    {
+        if (empty($this->logFiles[date('Y-m-d', strtotime($date))])) {
+            $this->logFiles[date('Y-m-d')] = new JSON($this->logPath . date('Y', strtotime($date)) . '/' . date('M', strtotime($date)) .'/log_' . date('Y-m-d', strtotime($date)) . '.json');
+        }
+
+        return $this->logFiles[date('Y-m-d')];
+    }
+
+    /**
      * Backs up all logs into yearly gists
      * @return [type] [description]
      */
