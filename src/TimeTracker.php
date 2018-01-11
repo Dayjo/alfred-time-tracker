@@ -220,9 +220,7 @@ class TimeTracker
                 $actions = ['Start','Stop'];
                 // Create a new Item List
                 $List = new ItemList;
-                echo "GOT HERE";
-                var_dump($input);
-                exit;
+
 
                 // Loop through all of the existing task names
                 foreach ($actions as $action) {
@@ -568,6 +566,9 @@ class TimeTracker
           [
             'prefix' => ':reporting',
             'command' => function ($input) {
+                echo "GOT HERE";
+                var_dump($input);
+                exit;
                 switch (strtolower($input)) {
                     case 'start':
                         echo "Starting server..";
