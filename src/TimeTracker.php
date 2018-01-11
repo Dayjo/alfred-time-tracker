@@ -490,7 +490,7 @@ class TimeTracker
 
             $date = DateTime::createFromFormat('Y-m-d', $day);
 
-            $file = $this->getLog($date); //$this->logFiles[$date] = new JSON($log);
+            $file = $this->getLog($day); //$this->logFiles[$date] = new JSON($log);
 
             $report[$day] = [];
             $previousTime = 0;
