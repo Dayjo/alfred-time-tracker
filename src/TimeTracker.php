@@ -314,6 +314,26 @@ class TimeTracker
             }
 
         ]));
+
+
+        $this->Workflow->addCommand(new Command(
+            [
+                'prefix' => ':clearTasks',
+                'command' => function ($input) {
+                    // Create a new Item List
+                    $List = new ItemList;
+
+                    $List->add(new Item([
+                        'title' => "Clear out cached tasks.",
+                        'arg'   => ':clearTasks',
+                        'autocomplete' => ':clearTasks',
+                        'subtitle' => "This will reset any task names you autocomplete."])
+                    );
+                    // Output the list of tasks to
+                    echo $List->output();
+                }
+            ]
+        ));
     }
 
     /**
