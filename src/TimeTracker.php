@@ -813,7 +813,11 @@ class TimeTracker
 
     private function stopReportingServer()
     {
-        $cmd = 'kill -9 $(ps -A | grep alfred-time-tracker | grep -m1 php | awk \'{print $1}\')';
-        echo exec($cmd);
+        // kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk '{print $1}')
+        $cmd = 'kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk \'{print $1}\')';
+        exec($cmd, $output, $line);
+        var_dump($cmd);
+        var_dump($output);
+        var_dump($line);
     }
 }
