@@ -7,7 +7,6 @@ use Dayjo\JSON as JSON;
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
-
 class TimeTracker
 {
     private $Workflow;
@@ -15,23 +14,25 @@ class TimeTracker
     private $tasksFile;
     private $configTemplate = [
         'dayEnds' => '18:00',
-        'gistAccessToken' => '807gfqpgewgfag78esu0seaf7e'
+        'gistAccessToken' => null
     ];
+
+    private $logPath       = __DIR__  . '/../logs/';
+    private $reportPath   = __DIR__  . '/../reports/';
+    private $configPath    = __DIR__  . '/../config/';
 
     public function __construct()
     {
         // Grab the current log
-        $this->logFiles[date('Y-m-d')] = new JSON(__DIR__ . '/../logs/' . date('Y') . '/' . date('M') .'/log_' . date('Y-m-d') . '.json');
+        $this->logFiles[date('Y-m-d')] = new JSON($this->logPath . date('Y') . '/' . date('M') .'/log_' . date('Y-m-d') . '.json');
         if (empty($this->logFiles[date('Y-m-d')]->data)) {
             $this->logFiles[date('Y-m-d')]->data = array();
         }
 
-
-
         // Grab all of the existing tasks
-        $this->tasksFile = new JSON(__DIR__ . '/../logs/tasks.json');
+        $this->tasksFile = new JSON($this->logPath . 'tasks.json');
 
-        $this->Workflow = new Workflow($this->configTemplate, __DIR__ . '/../config/config.json');
+        $this->Workflow = new Workflow($this->configTemplate, $this->configPath . '/config.json');
     }
 
     /**
@@ -90,25 +91,63 @@ class TimeTracker
           [
             'prefix' => ':',
             'command' => function ($input) {
-                $commands = ['stop', 'report', 'open', 'backup'];
+                $commands = [
+                    'stop' => [
+                        'title' => "Stop Tracking",
+                        'arg' => ":stop",
+                        'autocomplete' => ":stop"
+                    ],
+                    'report' => [
+                        'title' => "Generate a Report",
+                        'arg' => ":report",
+                        'autocomplete' => ":report"
+                    ],
+                    'open'=> [
+                        'title' => "Open Workflow Folder",
+                        'arg' => ":open",
+                        'autocomplete' => ":open"
+                    ],
+                    'backup'=> [
+                        'title' => "Backup your time logs",
+                        'arg' => ":backup",
+                        'autocomplete' => ":backup"
+                    ],
+                    'today'=> [
+                        'title' => "Todays logs",
+                        'arg' => ":today",
+                        'autocomplete' => ":today"
+                    ],
+                    'clearTasks' => [
+                        'title' => "Clear out cached tasks.",
+                        'arg'   => ':clearTasks',
+                        'autocomplete' => ':clearTasks',
+                        'subtitle' => "This will reset any task names you autocomplete."
+                    ]
+
+                ];
 
                 // Create a new Item List
                 $List = new ItemList;
 
                 // Loop through all of the existing task names
-                foreach ($commands as $cmd) {
+                foreach ($commands as $cmd => $item) {
 
                     // If the input matches the task name, output the task
                     if (trim($input) == '' || (stristr($cmd, $input) && $cmd != $input)) {
 
                         // Add the new item to the list
-                        $List->add(new Item([
-                            'title' => $cmd,
-                            'arg' => ":{$cmd}",
-                            'autocomplete' => ":". $cmd])
-                        );
+                        $List->add(new Item($item));
                     }
                 }
+
+                // Add the currently tracked item
+                $currentlyTracking = $this->currentlyTracking();
+                $List->add(new Item([
+                    'title' => "Currently Tracking {$currentlyTracking->task} {$currentlyTracking->length}",
+                    'arg' => '',
+                    'valid' => false
+                ]));
+
 
 
                 // Output the list of tasks to
@@ -228,7 +267,12 @@ class TimeTracker
                 }
 
 
-
+                // Add the new item to the list
+                $List->add(new Item([
+                    'title' => "Todays Logs",
+                    'arg' => ':today',
+                    'autocomplete' => ':today'])
+                );
 
                 foreach ($report as $date => $day) {
                     $date = DateTime::createFromFormat('Y-m-d', $date);
@@ -238,8 +282,8 @@ class TimeTracker
                         // Add the new item to the list
                         $List->add(new Item([
                             'title' => $logItem->task .  " (" . ($logItem->length > 1 ?  $this->secondsToTime($logItem->length) : 'on going...') . ")",
-                            'arg' => '',
-                            'autocomplete' => ''])
+                            'arg' => ':today',
+                            'autocomplete' => ':today'])
                         );
                     }
                 }
@@ -270,6 +314,26 @@ class TimeTracker
             }
 
         ]));
+
+
+        $this->Workflow->addCommand(new Command(
+            [
+                'prefix' => ':clearTasks',
+                'command' => function ($input) {
+                    // Create a new Item List
+                    $List = new ItemList;
+
+                    $List->add(new Item([
+                        'title' => "Clear out cached tasks.",
+                        'arg'   => ':clearTasks',
+                        'autocomplete' => ':clearTasks',
+                        'subtitle' => "This will reset any task names you autocomplete."])
+                    );
+                    // Output the list of tasks to
+                    echo $List->output();
+                }
+            ]
+        ));
     }
 
     /**
@@ -278,8 +342,7 @@ class TimeTracker
      */
     private function backupLogs()
     {
-        $logs[$year] = $this->getDirContents(__DIR__ . '/../logs/');
-
+        $logs[$year] = $this->getDirContents($this->logPath);
 
         $backup = [];
         foreach ($logs as $year) {
@@ -288,8 +351,10 @@ class TimeTracker
             }
         }
 
-        /* Loop through all log directories */
+        // Backup the tasks.json too
+        $backup['tasks.json'] = ['content' => file_get_contents($this->logPath . 'tasks.json')];
 
+        /* Loop through all log directories */
         $githubClient = new \Github\Client();
         $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
 
@@ -313,6 +378,140 @@ class TimeTracker
     }
 
     /**
+     * [private description]
+     * @var [type]
+     */
+    private function generateReport(string $type)
+    {
+        $report = [];
+        $reportText = '';
+
+        switch ($type) {
+            case 'monthly':
+                $reportName = date('Y-m');
+                $logsDir = $this->logPath . date('Y') . '/' . date('M') . '/';
+            break;
+
+            case 'yearly':
+                $reportName = date('Y');
+                $logsDir = $this->logPath . date('Y') . '/';
+            break;
+        }
+
+        // Get all the of the log files for the requested period
+        $logFiles = $this->getDirContents($logsDir);
+
+        // Sort them in date order
+        usort($logFiles, function ($a, $b) {
+            $aname = pathinfo($a, PATHINFO_FILENAME);
+            $bname = pathinfo($b, PATHINFO_FILENAME);
+
+            if ($aname > $bname) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+
+        // Loop through the logs, load them in and build the report
+        foreach ($logFiles as $log) {
+            $filename = pathinfo($log, PATHINFO_FILENAME);
+            $day = str_replace('log_', '', $filename);
+            $day = str_replace('.json', '', $day);
+
+            $date = DateTime::createFromFormat('Y-m-d', $day);
+
+            $file = new JSON($log);
+
+            $report[$day] = [];
+            $previousTime = 0;
+            foreach ($file->data as $logItem) {
+                // Add this item to the report
+                $report[$day][] = $logItem;
+
+                // Set the previous item's length
+                if ($previousTime) {
+                    if ($logItem->time > $previousTime && $logItem->time - $previousTime) {
+                        $report[$day][count($report[$day])-2]->length = $logItem->time - $previousTime;
+                    }
+                }
+
+                $previousTime = $logItem->time;
+            }
+
+            // Set the last item's length
+            if ($previousTime) {
+                if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
+                    $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
+                } else {
+                    $report[$day][count($report[$day])-1]->length =  null;
+                }
+            }
+        }
+
+        // Now loop through the report and write it to a file
+        foreach ($report as $date => $day) {
+            $date = DateTime::createFromFormat('Y-m-d', $date);
+            $reportText .= "\n-------\n";
+            $reportText .= '# ' . $date->format("l jS \of F Y") . "\n\n";
+            foreach ($day as $logItem) {
+                $reportText .= '## ' . $logItem->task . "\n";
+
+                if ($logItem->notes) {
+                    $reportText .= 'Notes: ' . $logItem->notes . " \n\n";
+                }
+
+                $reportText .= '* Started: ' . date('H:i:s', $logItem->time). "\n";
+
+                if ($logItem->length) {
+                    $reportText .= '* Length: ' . $this->secondsToTime($logItem->length). "\n\n";
+                } else {
+                    $reportText .= '* Unknown Length' . "\n\n";
+                }
+            }
+        }
+
+        // Create the reports dir if it doesn't exist
+        if (!file_exists($this->reportPath)) {
+            mkdir($this->reportPath);
+        }
+
+        // Write the report
+        file_put_contents($this->reportPath. $reportName . '.md', $reportText);
+
+        // Backup the report to a gist
+        if ($this->Workflow->config->gistAccessToken) {
+            $githubClient = new \Github\Client();
+            $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
+
+            // Create a new gist
+            $data = array(
+                'files' => [
+                     $reportName . '.md' => ['content' => $reportText]
+                    ],
+                'public' => false,
+                'description' => 'Time Tracking Report ' . date('Y-m-d H:i:s')
+            );
+
+            // First check to see if we already have a backup gist.
+            if (empty($this->Workflow->config->reportsGistId)) {
+                $gist = $githubClient->api('gists')->create($data);
+                $this->Workflow->config->reportsGistId = $gist['id'];
+            } else {
+                $gist = $githubClient->api('gists')->update($this->Workflow->config->reportsGistId, $data);
+            }
+
+
+            echo $gist['html_url'];
+            return;
+        }
+
+        echo $this->reportPath. $reportName . '.md';
+        return;
+    }
+
+    /**
      * Initialises the report command
      */
     private function initRunReports()
@@ -333,99 +532,11 @@ class TimeTracker
 
                     switch ($input) {
                         case 'monthly':
-                            $reportName = date('Y-m');
-                            $logsDir = __DIR__ . '/../logs/' . date('Y') . '/' . date('M') . '/';
-                        break;
-
                         case 'yearly':
-                            $reportName = date('Y');
-                            $logsDir = __DIR__ . '/../logs/' . date('Y') . '/';
+                            $this->generateReport($input);
                         break;
+
                     }
-
-                    // Get all the of the log files for the requested period
-                    $logFiles = $this->getDirContents($logsDir);
-
-                    // Sort them in date order
-                    usort($logFiles, function ($a, $b) {
-                        $aname = pathinfo($a, PATHINFO_FILENAME);
-                        $bname = pathinfo($b, PATHINFO_FILENAME);
-
-                        if ($aname > $bname) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
-                    });
-                    $report = [];
-                    $reportText = '';
-                    // Loop through the logs, load them in and build the report
-                    foreach ($logFiles as $log) {
-                        $filename = pathinfo($log, PATHINFO_FILENAME);
-                        $day = str_replace('log_', '', $filename);
-                        $day = str_replace('.json', '', $day);
-
-                        $date = DateTime::createFromFormat('Y-m-d', $day);
-
-                        $file = new JSON($log);
-
-                        $report[$day] = [];
-                        $previousTime = 0;
-                        foreach ($file->data as $logItem) {
-                            // Add this item to the report
-                            $report[$day][] = $logItem;
-
-                            // Set the previous item's length
-                            if ($previousTime) {
-                                if ($logItem->time > $previousTime && $logItem->time - $previousTime) {
-                                    $report[$day][count($report[$day])-2]->length = $logItem->time - $previousTime;
-                                }
-                            }
-
-                            $previousTime = $logItem->time;
-                        }
-
-                        // Set the last item's length
-                        if ($previousTime) {
-                            if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
-                                $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
-                            } else {
-                                $report[$day][count($report[$day])-1]->length =  null;
-                            }
-                        }
-                    }
-
-                    foreach ($report as $date => $day) {
-                        $date = DateTime::createFromFormat('Y-m-d', $date);
-                        $reportText .= "\n=============================\n";
-                        $reportText .= '# ' . $date->format("l jS \of F Y") . "\n\n";
-                        foreach ($day as $logItem) {
-                            $reportText .= '## ' . $logItem->task . "\n";
-
-                            if ($logItem->notes) {
-                                $reportText .= 'Notes: ' . $logItem->notes . " \n\n";
-                            }
-
-                            $reportText .= '* Started: ' . date('H:i:s', $logItem->time). "\n";
-
-                            if ($logItem->length) {
-                                $reportText .= '* Length: ' . $this->secondsToTime($logItem->length). "\n\n";
-                            } else {
-                                $reportText .= '* Unknown Length' . "\n\n";
-                            }
-                        }
-                    }
-
-                    // Create the reports dir if it doesn't exist
-                    if (!file_exists(__DIR__ . '/../reports/')) {
-                        mkdir(__DIR__ . '/../reports/');
-                    }
-
-                    // WRite the report
-                    file_put_contents(__DIR__ . '/../reports/'. $reportName . '.md', $reportText);
-
-                    // Output the filename so that it opens
-                    echo __DIR__ . '/../reports/'. $reportName . '.md';
                 }
             }
           ]
@@ -497,6 +608,28 @@ class TimeTracker
                 echo $this->backupLogs();
             }
         ]));
+
+        /**
+         * Add the command for adding notes
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':clearTasks',
+            'command' => function ($input) {
+                $this->clearTasks();
+            }
+        ]));
+    }
+
+
+    /**
+     * Empty the tasks file
+     * @return
+     */
+    private function clearTasks()
+    {
+        $this->tasksFile->data = [];
+        echo "Cleared existing task names";
     }
 
     /**
@@ -515,7 +648,7 @@ class TimeTracker
                 }
 
                 // Load in the tasks json
-                $JSON = new JSON(__dir__ . '/../logs/tasks.json');
+                $JSON = new JSON($this->logPath . 'tasks.json');
                 $tasks =& $JSON->data;
 
                 // Create a new Item List
