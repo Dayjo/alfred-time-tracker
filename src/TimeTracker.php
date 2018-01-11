@@ -616,7 +616,7 @@ class TimeTracker
           [
             'prefix' => ':clearTasks',
             'command' => function ($input) {
-                echo $this->clearTasks();
+                $this->clearTasks();
             }
         ]));
     }
@@ -627,8 +627,9 @@ class TimeTracker
      */
     private function clearTasks()
     {
+        echo "Deleting " . $this->logPath . 'tasks.json.';
         unlink($this->logPath . 'tasks.json');
-        echo "Tasks file deleted";
+        echo PHP_EOL . "Tasks file deleted";
     }
 
     /**
