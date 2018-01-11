@@ -217,10 +217,18 @@ class TimeTracker
           [
             'prefix' => ':reporting',
             'command' => function ($input) {
-                $actions = ['Start','Stop'];
+
+                // First lets see if the reporting server is running or not
+                $running = exec('ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk \'{print $1}\'');
+
+                if ($running) {
+                    $actions = ['Stop', 'Open'];
+                } else {
+                    $actions = ['Start'];
+                }
+
                 // Create a new Item List
                 $List = new ItemList;
-
 
                 // Loop through all of the existing task names
                 foreach ($actions as $action) {
