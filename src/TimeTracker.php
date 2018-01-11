@@ -397,12 +397,12 @@ class TimeTracker
     public function getLog(String $date)
     {
         if (empty($this->logFiles[date('Y-m-d', strtotime($date))])) {
-            $this->logFiles[date('Y-m-d')] = new JSON($this->logPath . date('Y', strtotime($date)) . '/' . date('M', strtotime($date)) .'/log_' . date('Y-m-d', strtotime($date)) . '.json');
+            $this->logFiles[date('Y-m-d', strtotime($date))] = new JSON($this->logPath . date('Y', strtotime($date)) . '/' . date('M', strtotime($date)) .'/log_' . date('Y-m-d', strtotime($date)) . '.json');
         }
 
         // Let's just go and make sure the 'lengths' are correct
 
-        return $this->logFiles[date('Y-m-d')];
+        return $this->logFiles[date('Y-m-d', strtotime($date))];
     }
 
     /**

@@ -37,10 +37,10 @@ $today = $reporting->getLog(date("Y-m-d"));
                 ?>
                 <p>
                 <strong>
-                    <?=date('H:i:s', $task->time);?>
+                    <?=date('Y-m-d H:i:s', $task->time);?>
                      -&gt;
 
-                     <?=date('H:i:s', $task->time + $task->length);?>
+                     <?=date('Y-m-d H:i:s', $task->time + $task->length);?>
                     (<?=$reporting->secondsToTime($task->length);?>)
                     <?=$task->task;?>
                 </strong>
