@@ -124,14 +124,14 @@ class TimeTracker
                         'subtitle' => "This will reset any task names you autocomplete."
                     ],
 
-                    'reportingStart' => [
+                    'startReporting' => [
                         'title' => "Start Reporting Server",
                         'arg'   => ':startReporting',
                         'autocomplete' => ':startReporting',
                         'subtitle' => "Start or stop the reporting server"
                     ],
 
-                    'reportingStop' => [
+                    'stopReporting' => [
                         'title' => "Stop Reporting Server",
                         'arg'   => ':stopReporting',
                         'autocomplete' => ':stopReporting',
@@ -553,6 +553,30 @@ class TimeTracker
             }
           ]
         ));
+
+
+
+        /**
+         * Add the command for starting report server
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':startReporting',
+            'command' => function ($input) {
+                $this->startReportingServer();
+            }
+        ]));
+
+        /**
+         * Add the command for stopping report server
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':stopReporting',
+            'command' => function ($input) {
+                $this->stopReportingServer();
+            }
+        ]));
     }
 
     public function initRunTasks()
@@ -629,25 +653,6 @@ class TimeTracker
             'prefix' => ':clearTasks',
             'command' => function ($input) {
                 $this->clearTasks();
-            }
-        ]));
-
-        /**
-         * Add the command for starting report server
-         */
-        $this->Workflow->addCommand(new Command(
-          [
-            'prefix' => ':reporting',
-            'command' => function ($input) {
-                switch ($input) {
-                    case 'start':
-                        $this->startReportingServer();
-                    break;
-
-                    case 'stop':
-                        $this->stopReportingServer();
-                    break;
-                }
             }
         ]));
     }
