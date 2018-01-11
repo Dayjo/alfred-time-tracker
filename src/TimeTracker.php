@@ -221,31 +221,33 @@ class TimeTracker
                 // First lets see if the reporting server is running or not
                 $running = trim(exec('ps -A | grep alfred-time-tracker | grep php | grep -m1 -v  -e "search.php" -e "run.php"'));
 
-
-                if ($running) {
-                    $actions = ['Stop', 'Open'];
-                } else {
-                    $actions = ['Start'];
-                }
-
                 // Create a new Item List
                 $List = new ItemList;
 
-                // Loop through all of the existing task names
-                foreach ($actions as $action) {
+                if ($running) {
+                    $actions = ['Stop', 'Open'];
 
-                    // If the input matches the task name, output the task
-                    if (trim($input) == '' || (stristr($action, $input) && $action != $input)) {
+                    // Add the new item to the list
+                    $List->add(new Item([
+                        'title' => 'Open Reports',
+                        'arg' => ':reporting open' ,
+                        'autocomplete' => ':reporting open'])
+                    );
 
-                        // Add the new item to the list
-                        $List->add(new Item([
-                            'title' => $action .' Reporting Server',
-                            'arg' => ':reporting ' . $action,
-                            'autocomplete' => ':reporting ' . $action])
-                        );
-                    }
+                    // Add the new item to the list
+                    $List->add(new Item([
+                        'title' => 'Stop Reporting Server',
+                        'arg' => ':reporting stop' ,
+                        'autocomplete' => ':reporting stop'])
+                    );
+                } else {
+                    // Add the new item to the list
+                    $List->add(new Item([
+                        'title' => 'Start Reporting Server',
+                        'arg' => ':reporting start' ,
+                        'autocomplete' => ':reporting start'])
+                    );
                 }
-
 
                 // Output the list of tasks to
                 echo $List->output();
