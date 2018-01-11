@@ -595,7 +595,7 @@ class TimeTracker
                 }
 
                 $this->track($input);
-                echo "Started Tracking $input";
+                echo "$input";
             }
           ]
         ));
