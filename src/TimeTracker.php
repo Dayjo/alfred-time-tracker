@@ -351,6 +351,9 @@ class TimeTracker
             }
         }
 
+        // Backup the tasks.json too
+        $backup['tasks.json'] = ['content' => file_get_contents($this->logPath . 'tasks.json')];
+
         /* Loop through all log directories */
         $githubClient = new \Github\Client();
         $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
@@ -605,6 +608,27 @@ class TimeTracker
                 echo $this->backupLogs();
             }
         ]));
+
+        /**
+         * Add the command for adding notes
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':clearTasks',
+            'command' => function ($input) {
+                echo $this->clearTasks();
+            }
+        ]));
+    }
+
+    /**
+     * Delete the tasks file
+     * @return
+     */
+    private function clearTasks()
+    {
+        unlink($this->logPath . 'tasks.json');
+        echo "Tasks file deleted";
     }
 
     /**
