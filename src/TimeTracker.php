@@ -589,7 +589,7 @@ class TimeTracker
           [
             'prefix' => ':reporting',
             'command' => function ($input) {
-                switch ($input) {
+                switch (strtolower($input)) {
                     case 'start':
                         $this->startReportingServer();
                     break;
