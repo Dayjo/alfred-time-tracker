@@ -34,10 +34,10 @@ $today = $reporting->getLog(date("Y-m-d"));
                 ?>
                 <p>
                 <strong>
-                    (<?=$today->length?>)
-                    <?=$today->task;?>
+                    (<?=$task->length?>)
+                    <?=$task->task;?>
                 </strong>
-                <em><?=$today->notes;?></em>
+                <em><?=$task->notes;?></em>
                 </p>
 
                 <?php
