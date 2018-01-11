@@ -219,7 +219,9 @@ class TimeTracker
             'command' => function ($input) {
 
                 // First lets see if the reporting server is running or not
-                $running = exec('ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk \'{print $1}\'');
+                $running = trim(exec('ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk \'{print $1}\''));
+                var_dump($running);
+                exit;
 
                 if ($running) {
                     $actions = ['Stop', 'Open'];
