@@ -65,6 +65,16 @@ Sometimes you might be tracking lots of the same thing, but want to add notes to
 
 ---
 
+### Clearing Tasks
+
+You may want to clear out all of the tasks that are saved to help with auto completing. These are all stored in a tasks.json file in the /logs directory of the workflow. You can clear these out completely by doing;
+
+```
+tt :clearTasks
+```
+
+---
+
 ### Backup
 You can manually backup the time logs and tasks list to a Github Gist using `tt :backup`. But first you will need to set the `gistAccessToken` config variable.
 
