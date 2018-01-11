@@ -34,7 +34,7 @@ $today = $reporting->getLog(date("Y-m-d"));
                 ?>
                 <p>
                 <strong>
-                    (<?=$task->length?>)
+                    (<?=$reporting->secondsToTime($task->length);?>)
                     <?=$task->task;?>
                 </strong>
                 <em><?=$task->notes;?></em>
