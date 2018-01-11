@@ -219,7 +219,7 @@ class TimeTracker
             'command' => function ($input) {
 
                 // First lets see if the reporting server is running or not
-                $running = trim(exec('ps -A | grep -m1 alfred-time-tracker | grep -m1 php | grep -m1 -v  -e "search.php" -e "run.php"'));
+                $running = trim(exec('ps -A | grep alfred-time-tracker | grep php | grep -m1 -v  -e "search.php" -e "run.php"'));
 
 
                 if ($running) {
