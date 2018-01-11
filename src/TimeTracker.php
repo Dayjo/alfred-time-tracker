@@ -209,38 +209,6 @@ class TimeTracker
             }
         ]));
 
-        /**
-         * Add the command for generating reports
-         */
-        $this->Workflow->addCommand(new Command(
-          [
-            'prefix' => ':report',
-            'command' => function ($input) {
-                $reports = ['monthly','yearly'];
-                // Create a new Item List
-                $List = new ItemList;
-
-                // Loop through all of the existing task names
-                foreach ($reports as $report) {
-
-                    // If the input matches the task name, output the task
-                    if (trim($input) == '' || (stristr($report, $input) && $report != $input)) {
-
-                        // Add the new item to the list
-                        $List->add(new Item([
-                            'title' => 'Generate ' . $report. ' report',
-                            'arg' => ':report ' . $report,
-                            'autocomplete' => ':report ' . $report])
-                        );
-                    }
-                }
-
-
-                // Output the list of tasks to
-                echo $List->output();
-            }
-          ]
-        ));
 
         /**
          * Add the command for generating reports
@@ -274,6 +242,40 @@ class TimeTracker
             }
           ]
         ));
+
+        /**
+         * Add the command for generating reports
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':report',
+            'command' => function ($input) {
+                $reports = ['monthly','yearly'];
+                // Create a new Item List
+                $List = new ItemList;
+
+                // Loop through all of the existing task names
+                foreach ($reports as $report) {
+
+                    // If the input matches the task name, output the task
+                    if (trim($input) == '' || (stristr($report, $input) && $report != $input)) {
+
+                        // Add the new item to the list
+                        $List->add(new Item([
+                            'title' => 'Generate ' . $report. ' report',
+                            'arg' => ':report ' . $report,
+                            'autocomplete' => ':report ' . $report])
+                        );
+                    }
+                }
+
+
+                // Output the list of tasks to
+                echo $List->output();
+            }
+          ]
+        ));
+
 
 
 
@@ -555,6 +557,28 @@ class TimeTracker
     private function initRunReports()
     {
 
+
+        /**
+         * Add the command for starting report server
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':reporting',
+            'command' => function ($input) {
+                switch (strtolower($input)) {
+                    case 'start':
+                        echo "Starting server..";
+                        $this->startReportingServer();
+                    break;
+
+                    case 'stop':
+                        echo "Stopping server..";
+                        $this->stopReportingServer();
+                    break;
+                }
+            }
+        ]));
+
         /**
          * Add the command for generating reports
          */
@@ -579,29 +603,6 @@ class TimeTracker
             }
           ]
         ));
-
-
-
-        /**
-         * Add the command for starting report server
-         */
-        $this->Workflow->addCommand(new Command(
-          [
-            'prefix' => ':reporting',
-            'command' => function ($input) {
-                switch (strtolower($input)) {
-                    case 'start':
-                        echo "Starting server..";
-                        $this->startReportingServer();
-                    break;
-
-                    case 'stop':
-                        echo "Stopping server..";
-                        $this->stopReportingServer();
-                    break;
-                }
-            }
-        ]));
     }
 
     public function initRunTasks()
