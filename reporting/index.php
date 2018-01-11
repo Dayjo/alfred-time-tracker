@@ -1,3 +1,22 @@
 <?php
+date_default_timezone_set('GMT');
 
-readfile("../reports/2018.md");
+include "vendor/autoload.php";
+include "src/TimeTracker.php";
+include "src/TimeTrackerReporting.php";
+
+$reporting = new TimeTrackerReporting;
+$reporting->initReporting();
+
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <h2>Currently Tracking: <?=$reporting->currentlyTracking()->task;?></h2>
+    </body>
+</html>
