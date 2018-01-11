@@ -116,6 +116,12 @@ class TimeTracker
                         'title' => "Todays logs",
                         'arg' => ":today",
                         'autocomplete' => ":today"
+                    ],
+                    'clearTasks' => [
+                        'title' => "Clear out cached tasks.",
+                        'arg'   => ':clearTasks',
+                        'autocomplete' => ':clearTasks',
+                        'subtitle' => "This will reset any task names you autocomplete."
                     ]
 
                 ];
@@ -424,7 +430,7 @@ class TimeTracker
         // Now loop through the report and write it to a file
         foreach ($report as $date => $day) {
             $date = DateTime::createFromFormat('Y-m-d', $date);
-            $reportText .= "\n=============================\n";
+            $reportText .= "\n-------\n";
             $reportText .= '# ' . $date->format("l jS \of F Y") . "\n\n";
             foreach ($day as $logItem) {
                 $reportText .= '## ' . $logItem->task . "\n";
@@ -475,7 +481,11 @@ class TimeTracker
 
 
             echo $gist['html_url'];
+            return;
         }
+
+        echo $this->reportPath. $reportName . '.md';
+        return;
     }
 
     /**
