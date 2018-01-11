@@ -559,29 +559,7 @@ class TimeTracker
     {
 
 
-        /**
-         * Add the command for starting report server
-         */
-        $this->Workflow->addCommand(new Command(
-          [
-            'prefix' => ':reporting',
-            'command' => function ($input) {
-                echo "GOT HERE";
-                var_dump($input);
-                exit;
-                switch (strtolower($input)) {
-                    case 'start':
-                        echo "Starting server..";
-                        $this->startReportingServer();
-                    break;
 
-                    case 'stop':
-                        echo "Stopping server..";
-                        $this->stopReportingServer();
-                    break;
-                }
-            }
-        ]));
         //
         // /**
         //  * Add the command for generating reports
@@ -611,6 +589,30 @@ class TimeTracker
 
     public function initRunTasks()
     {
+        /**
+         * Add the command for starting report server
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':reporting',
+            'command' => function ($input) {
+                echo "GOT HERE";
+                var_dump($input);
+                exit;
+
+                switch (strtolower($input)) {
+                    case 'start':
+                        echo "Starting server..";
+                        $this->startReportingServer();
+                    break;
+
+                    case 'stop':
+                        echo "Stopping server..";
+                        $this->stopReportingServer();
+                    break;
+                }
+            }
+        ]));
         /**
          * The actual start tracking command
          */
