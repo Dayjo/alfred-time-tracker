@@ -318,7 +318,6 @@ class TimeTracker
     {
         $logs[$year] = $this->getDirContents($this->logPath);
 
-
         $backup = [];
         foreach ($logs as $year) {
             foreach ($year as $fname) {
@@ -327,7 +326,6 @@ class TimeTracker
         }
 
         /* Loop through all log directories */
-
         $githubClient = new \Github\Client();
         $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
 
@@ -348,6 +346,136 @@ class TimeTracker
 
 
         echo $gist['html_url'];
+    }
+
+    /**
+     * [private description]
+     * @var [type]
+     */
+    private function generateReport(string $type)
+    {
+        $report = [];
+        $reportText = '';
+
+        switch ($type) {
+            case 'monthly':
+                $reportName = date('Y-m');
+                $logsDir = $this->logPath . date('Y') . '/' . date('M') . '/';
+            break;
+
+            case 'yearly':
+                $reportName = date('Y');
+                $logsDir = $this->logPath . date('Y') . '/';
+            break;
+        }
+
+        // Get all the of the log files for the requested period
+        $logFiles = $this->getDirContents($logsDir);
+
+        // Sort them in date order
+        usort($logFiles, function ($a, $b) {
+            $aname = pathinfo($a, PATHINFO_FILENAME);
+            $bname = pathinfo($b, PATHINFO_FILENAME);
+
+            if ($aname > $bname) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+
+        // Loop through the logs, load them in and build the report
+        foreach ($logFiles as $log) {
+            $filename = pathinfo($log, PATHINFO_FILENAME);
+            $day = str_replace('log_', '', $filename);
+            $day = str_replace('.json', '', $day);
+
+            $date = DateTime::createFromFormat('Y-m-d', $day);
+
+            $file = new JSON($log);
+
+            $report[$day] = [];
+            $previousTime = 0;
+            foreach ($file->data as $logItem) {
+                // Add this item to the report
+                $report[$day][] = $logItem;
+
+                // Set the previous item's length
+                if ($previousTime) {
+                    if ($logItem->time > $previousTime && $logItem->time - $previousTime) {
+                        $report[$day][count($report[$day])-2]->length = $logItem->time - $previousTime;
+                    }
+                }
+
+                $previousTime = $logItem->time;
+            }
+
+            // Set the last item's length
+            if ($previousTime) {
+                if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
+                    $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
+                } else {
+                    $report[$day][count($report[$day])-1]->length =  null;
+                }
+            }
+        }
+
+        // Now loop through the report and write it to a file
+        foreach ($report as $date => $day) {
+            $date = DateTime::createFromFormat('Y-m-d', $date);
+            $reportText .= "\n=============================\n";
+            $reportText .= '# ' . $date->format("l jS \of F Y") . "\n\n";
+            foreach ($day as $logItem) {
+                $reportText .= '## ' . $logItem->task . "\n";
+
+                if ($logItem->notes) {
+                    $reportText .= 'Notes: ' . $logItem->notes . " \n\n";
+                }
+
+                $reportText .= '* Started: ' . date('H:i:s', $logItem->time). "\n";
+
+                if ($logItem->length) {
+                    $reportText .= '* Length: ' . $this->secondsToTime($logItem->length). "\n\n";
+                } else {
+                    $reportText .= '* Unknown Length' . "\n\n";
+                }
+            }
+        }
+
+        // Create the reports dir if it doesn't exist
+        if (!file_exists($this->reportPath)) {
+            mkdir($this->reportPath);
+        }
+
+        // Write the report
+        file_put_contents($this->reportPath. $reportName . '.md', $reportText);
+
+        // Backup the report to a gist
+        if ($this->Workflow->config->gistAccessToken) {
+            $githubClient = new \Github\Client();
+            $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
+
+            // Create a new gist
+            $data = array(
+                'files' => [
+                     $reportName . '.md' => ['content' => $reportText]
+                    ],
+                'public' => false,
+                'description' => 'Time Tracking Report ' . date('Y-m-d H:i:s')
+            );
+
+            // First check to see if we already have a backup gist.
+            if (empty($this->Workflow->config->reportsGistId)) {
+                $gist = $githubClient->api('gists')->create($data);
+                $this->Workflow->config->reportsGistId = $gist['id'];
+            } else {
+                $gist = $githubClient->api('gists')->update($this->Workflow->config->reportsGistId, $data);
+            }
+
+
+            echo $gist['html_url'];
+        }
     }
 
     /**
