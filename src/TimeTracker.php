@@ -591,10 +591,12 @@ class TimeTracker
             'command' => function ($input) {
                 switch (strtolower($input)) {
                     case 'start':
+                        echo "Starting server..";
                         $this->startReportingServer();
                     break;
 
                     case 'stop':
+                        echo "Stopping server..";
                         $this->stopReportingServer();
                     break;
                 }
@@ -815,8 +817,8 @@ class TimeTracker
     {
         // kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk '{print $1}')
         $cmd = 'kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk \'{print $1}\')';
-        exec($cmd, $output, $line);
         var_dump($cmd);
+        exec($cmd, $output, $line);
         var_dump($output);
         var_dump($line);
     }
