@@ -219,10 +219,8 @@ class TimeTracker
             'command' => function ($input) {
 
                 // First lets see if the reporting server is running or not
-                $running = trim(exec('ps -A | grep -m1 alfred-time-tracker | grep -m1 php grep -m1 -v  -e "search.php"'));
-                echo 'ps -A | grep -m1 alfred-time-tracker | grep -m1 php | grep -m1 -v  -e "search.php" | awk \'{print $1}\'' . PHP_EOL;
-                var_dump($running);
-                exit;
+                $running = trim(exec('ps -A | grep -m1 alfred-time-tracker | grep -m1 php grep -m1 -v  -e "search.php" -e "run.php"'));
+
 
                 if ($running) {
                     $actions = ['Stop', 'Open'];
@@ -829,8 +827,8 @@ class TimeTracker
 
     private function stopReportingServer()
     {
-        // kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk '{print $1}')
-        $cmd = 'kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | awk \'{print $1}\')';
+        // ps -A | grep -m1 alfred-time-tracker | grep -m1 php | grep -m1 -v  -e "search.php" | awk '{print $1}')
+        $cmd = 'kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | grep -m1 -v  -e "search.php" -e "run.php" | awk \'{print $1}\')';
         var_dump($cmd);
         exec($cmd, $output, $line);
         var_dump($output);
