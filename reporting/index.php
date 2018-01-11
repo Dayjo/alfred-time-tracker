@@ -30,7 +30,18 @@ $today = $reporting->getLog(date("Y-m-d"));
         <h2>Today:</h2>
 
         <?php
-            var_dump($today);
+            foreach ($today->data as $task):
+                ?>
+                <p>
+                <strong>
+                    (<?=$today->length?>)
+                    <?=$today->task;?>
+                </strong>
+                <em><?=$today->notes;?></em>
+                </p>
+
+                <?php
+            endforeach;
         ?>
     </body>
 </html>
