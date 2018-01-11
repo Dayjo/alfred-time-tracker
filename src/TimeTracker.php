@@ -97,11 +97,11 @@ class TimeTracker
                         'arg' => ":stop",
                         'autocomplete' => ":stop"
                     ],
-                    'report' => [
-                        'title' => "Generate a Report",
-                        'arg' => ":report",
-                        'autocomplete' => ":report"
-                    ],
+                    // 'report' => [
+                    //     'title' => "Generate a Report",
+                    //     'arg' => ":report",
+                    //     'autocomplete' => ":report"
+                    // ],
                     'open'=> [
                         'title' => "Open Workflow Folder",
                         'arg' => ":open",
@@ -231,6 +231,39 @@ class TimeTracker
                             'title' => 'Generate ' . $report. ' report',
                             'arg' => ':report ' . $report,
                             'autocomplete' => ':report ' . $report])
+                        );
+                    }
+                }
+
+
+                // Output the list of tasks to
+                echo $List->output();
+            }
+          ]
+        ));
+
+        /**
+         * Add the command for generating reports
+         */
+        $this->Workflow->addCommand(new Command(
+          [
+            'prefix' => ':reporting',
+            'command' => function ($input) {
+                $actions = ['Start','Stop'];
+                // Create a new Item List
+                $List = new ItemList;
+
+                // Loop through all of the existing task names
+                foreach ($actions as $action) {
+
+                    // If the input matches the task name, output the task
+                    if (trim($input) == '' || (stristr($action, $input) && $action != $input)) {
+
+                        // Add the new item to the list
+                        $List->add(new Item([
+                            'title' => $action .' Reporting Server',
+                            'arg' => ':reporting ' . $action,
+                            'autocomplete' => ':reporting ' . $action])
                         );
                     }
                 }
