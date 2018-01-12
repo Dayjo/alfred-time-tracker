@@ -624,7 +624,6 @@ class TimeTracker
           [
             'prefix' => ':reporting',
             'command' => function ($input) {
-                echo "GOT IN HERE "  . $input;
                 switch (strtolower($input)) {
                     case 'start':
                         echo "Starting server..";
@@ -852,7 +851,6 @@ class TimeTracker
 
     private function stopReportingServer()
     {
-        // ps -A | grep -m1 alfred-time-tracker | grep -m1 php | grep -m1 -v  -e "search.php" | awk '{print $1}')
         $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep  php | grep -v  -e "search.php" -e "run.php" | awk \'{print $1}\')';
         exec($cmd, $output, $line);
     }
