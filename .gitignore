@@ -6,3 +6,5 @@ output
 logs
 config
 reports
+
+!reporting/config
