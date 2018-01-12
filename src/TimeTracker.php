@@ -635,6 +635,11 @@ class TimeTracker
                         echo "Stopping server..";
                         $this->stopReportingServer();
                     break;
+
+                    case 'open':
+                        // echo "Opening Reports";
+                        echo "http://localhost:8000";
+                        break;
                 }
             }
         ]));
@@ -841,17 +846,14 @@ class TimeTracker
 
     private function startReportingServer()
     {
-        $cmd = 'nohup php -S localhost:8000 -t "${PWD}/alfred-time-tracker/reporting" > /dev/null 2>&1 &';
+        $cmd = 'nohup php -S localhost:8000 -t "${PWD}/alfred-time-tracker/reporting/public" > /dev/null 2>&1 &';
         echo exec($cmd);
     }
 
     private function stopReportingServer()
     {
         // ps -A | grep -m1 alfred-time-tracker | grep -m1 php | grep -m1 -v  -e "search.php" | awk '{print $1}')
-        $cmd = 'kill -9 $(ps -A | grep -m1 alfred-time-tracker | grep -m1 php | grep -m1 -v  -e "search.php" -e "run.php" | awk \'{print $1}\')';
-        var_dump($cmd);
+        $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep  php | grep -v  -e "search.php" -e "run.php" | awk \'{print $1}\')';
         exec($cmd, $output, $line);
-        var_dump($output);
-        var_dump($line);
     }
 }
