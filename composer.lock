@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+    "hash": "6edc6992b84243d5deb04fddceaa2528",
     "content-hash": "ae889ed85253f609ee52dcf6655ff512",
     "packages": [
         {
@@ -56,20 +57,20 @@
                 "stream_filter_append",
                 "stream_filter_register"
             ],
-            "time": "2017-08-18T09:54:01+00:00"
+            "time": "2017-08-18 09:54:01"
         },
         {
             "name": "dayjo/alfred-workflow-helper",
-            "version": "v0.2.1",
+            "version": "v0.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dayjo/alfred-workflow-helper.git",
-                "reference": "e40f01bbee93b9c69d0dc8040d6dfaec226aee8f"
+                "reference": "0bce230f0d9281f4fb7d9066f5581de45f8bfc59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dayjo/alfred-workflow-helper/zipball/e40f01bbee93b9c69d0dc8040d6dfaec226aee8f",
-                "reference": "e40f01bbee93b9c69d0dc8040d6dfaec226aee8f",
+                "url": "https://api.github.com/repos/Dayjo/alfred-workflow-helper/zipball/0bce230f0d9281f4fb7d9066f5581de45f8bfc59",
+                "reference": "0bce230f0d9281f4fb7d9066f5581de45f8bfc59",
                 "shasum": ""
             },
             "require": {
@@ -92,20 +93,20 @@
                 }
             ],
             "description": "Helper for building alfred workflows in PHP",
-            "time": "2018-01-09T10:57:58+00:00"
+            "time": "2018-01-11 10:34:24"
         },
         {
             "name": "dayjo/php-json-handler",
-            "version": "v1.0.13",
+            "version": "v1.0.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dayjo/php-json-handler.git",
-                "reference": "8254009c38613d31f6e8381e338d97b611cde61d"
+                "reference": "0ac83fbebd53023c24e3b3ae19f5dc75e9242149"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dayjo/php-json-handler/zipball/8254009c38613d31f6e8381e338d97b611cde61d",
-                "reference": "8254009c38613d31f6e8381e338d97b611cde61d",
+                "url": "https://api.github.com/repos/Dayjo/php-json-handler/zipball/0ac83fbebd53023c24e3b3ae19f5dc75e9242149",
+                "reference": "0ac83fbebd53023c24e3b3ae19f5dc75e9242149",
                 "shasum": ""
             },
             "type": "library",
@@ -125,7 +126,7 @@
                 }
             ],
             "description": "Class for opening and writing to json files easily",
-            "time": "2018-01-05T16:35:01+00:00"
+            "time": "2018-01-12 12:08:21"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -190,7 +191,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2017-06-22T18:50:49+00:00"
+            "time": "2017-06-22 18:50:49"
         },
         {
             "name": "guzzlehttp/promises",
@@ -241,7 +242,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-12-20T10:07:11+00:00"
+            "time": "2016-12-20 10:07:11"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -306,7 +307,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-20T17:10:46+00:00"
+            "time": "2017-03-20 17:10:46"
         },
         {
             "name": "knplabs/github-api",
@@ -374,7 +375,7 @@
                 "gist",
                 "github"
             ],
-            "time": "2017-12-12T20:14:04+00:00"
+            "time": "2017-12-12 20:14:04"
         },
         {
             "name": "php-http/cache-plugin",
@@ -430,7 +431,7 @@
                 "httplug",
                 "plugin"
             ],
-            "time": "2017-11-29T20:45:41+00:00"
+            "time": "2017-11-29 20:45:41"
         },
         {
             "name": "php-http/client-common",
@@ -491,7 +492,7 @@
                 "http",
                 "httplug"
             ],
-            "time": "2017-11-30T11:06:59+00:00"
+            "time": "2017-11-30 11:06:59"
         },
         {
             "name": "php-http/discovery",
@@ -553,7 +554,7 @@
                 "message",
                 "psr7"
             ],
-            "time": "2017-08-03T10:12:53+00:00"
+            "time": "2017-08-03 10:12:53"
         },
         {
             "name": "php-http/guzzle6-adapter",
@@ -613,7 +614,7 @@
                 "Guzzle",
                 "http"
             ],
-            "time": "2016-05-10T06:13:32+00:00"
+            "time": "2016-05-10 06:13:32"
         },
         {
             "name": "php-http/httplug",
@@ -669,7 +670,7 @@
                 "client",
                 "http"
             ],
-            "time": "2016-08-31T08:30:17+00:00"
+            "time": "2016-08-31 08:30:17"
         },
         {
             "name": "php-http/message",
@@ -741,7 +742,7 @@
                 "message",
                 "psr-7"
             ],
-            "time": "2017-07-05T06:40:53+00:00"
+            "time": "2017-07-05 06:40:53"
         },
         {
             "name": "php-http/message-factory",
@@ -791,7 +792,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2015-12-19T14:08:53+00:00"
+            "time": "2015-12-19 14:08:53"
         },
         {
             "name": "php-http/promise",
@@ -841,7 +842,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-01-26T13:27:02+00:00"
+            "time": "2016-01-26 13:27:02"
         },
         {
             "name": "psr/cache",
@@ -887,7 +888,7 @@
                 "psr",
                 "psr-6"
             ],
-            "time": "2016-08-06T20:24:11+00:00"
+            "time": "2016-08-06 20:24:11"
         },
         {
             "name": "psr/http-message",
@@ -937,7 +938,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2016-08-06 14:39:51"
         },
         {
             "name": "symfony/options-resolver",
@@ -991,7 +992,7 @@
                 "configuration",
                 "options"
             ],
-            "time": "2018-01-03T07:38:00+00:00"
+            "time": "2018-01-03 07:38:00"
         }
     ],
     "packages-dev": [],
