@@ -22,4 +22,16 @@ class ReportingController extends Controller
             'totals' => $totals
         ]);
     }
+
+    public function getSearch()
+    {
+        $timeTracker = new TimeTrackerReporter;
+        return $timeTracker->getSearch();
+    }
+
+    public function getRun()
+    {
+        $timeTracker = new TimeTrackerReporter;
+        return $timeTracker->getRun();
+    }
 }

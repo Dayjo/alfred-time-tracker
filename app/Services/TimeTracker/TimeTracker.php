@@ -49,25 +49,26 @@ class TimeTracker
      * Handle the search command
      * @return [type] [description]
      */
-    public function getSearch()
+    public function getSearch($query = "")
     {
-
+        // $this->query = $query;
         // Itialise the commands
         $this->Workflow->state = $this->Workflow::STATE_SEARCHING;
         $this->initTasks();
         $this->initCommands();
-        $this->Workflow->run();
+        $this->Workflow->run($query);
     }
 
     /**
      * Handle the run command
      */
-    public function getRun()
+    public function getRun($query = "")
     {
+        $this->query = $query;
         $this->Workflow->state = $this->Workflow::STATE_RUNNING;
         $this->initRunTasks();
         $this->initRunReports();
-        $this->Workflow->run();
+        $this->Workflow->run($query);
     }
 
     private function getLatestWorkflowVersion()
@@ -159,7 +160,7 @@ class TimeTracker
                 // Add the currently tracked item
                 $currentlyTracking = $this->currentlyTracking();
                 $List->add(new Item([
-                    'title' => "Currently Tracking {$currentlyTracking->task} {$currentlyTracking->length}",
+                    'title' => "Currently Tracking {$currentlyTracking->task} " . $this->secondsToTime($currentlyTracking->length, "%h:%i"),
                     'arg' => '',
                     'valid' => false
                 ]));
@@ -792,7 +793,7 @@ class TimeTracker
                 // Add the currently tracked item
                 $currentlyTracking = $this->currentlyTracking();
                 $List->add(new Item([
-                    'title' => "Currently Tracking {$currentlyTracking->task} {$currentlyTracking->length}",
+                    'title' => "Currently Tracking {$currentlyTracking->task} " .$this->secondsToTime($currentlyTracking->length, "%h:%i"),
                     'arg' => '',
                     'valid' => false
                 ]));
