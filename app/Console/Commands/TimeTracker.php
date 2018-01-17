@@ -26,10 +26,17 @@ class TimeTracker extends Command
         $query  = $this->argument('query');
 
         $timeTracker = new \App\Services\TimeTracker\TimeTracker;
-        if ($action != 'run') {
+        switch (trim($action)) {
+            default:
+            break;
+
+            case 'search':
             $timeTracker->getSearch($query);
-        } else {
+            break;
+
+            case 'run':
             $timeTracker->getRun($query);
+            break;
         }
     }
 }

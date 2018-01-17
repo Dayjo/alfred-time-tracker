@@ -2,8 +2,8 @@ vendor
 .tags*
 .fuse*
 
-/storage/time-tracking/*
-/storage/logs
+storage/time-tracking
+storage/logs
 node_modules
 /storage/*.key
 /vendor

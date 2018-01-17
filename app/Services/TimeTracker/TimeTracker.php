@@ -633,8 +633,6 @@ class TimeTracker
     public function initRunTasks()
     {
 
-
-
         /**
          * Add the command for starting report server
          */
@@ -667,7 +665,6 @@ class TimeTracker
           [
             'prefix' => ':start',
             'command' => function ($input) {
-
                 // If no input, just return false
                 if (!$input) {
                     return false;
