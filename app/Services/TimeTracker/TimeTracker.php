@@ -435,8 +435,8 @@ class TimeTracker
         $backup['tasks.json'] = ['content' => file_get_contents($this->logPath . '../tasks.json')];
 
         /* Loop through all log directories */
-        $githubClient = new \Github\Client();
-        $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
+        $githubClient = new \GithubClient();
+        $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, \Github\Client::AUTH_URL_TOKEN);
 
         // Create a new gist
         $data = array(
@@ -569,7 +569,7 @@ class TimeTracker
         // Backup the report to a gist
         if ($this->Workflow->config->gistAccessToken) {
             $githubClient = new \Github\Client();
-            $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, Github\Client::AUTH_URL_TOKEN);
+            $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, \Github\Client::AUTH_URL_TOKEN);
 
             // Create a new gist
             $data = array(
@@ -840,8 +840,11 @@ class TimeTracker
         }
     }
 
-    public function secondsToTime(int $seconds, string $format = '%h hours %i mins')
+    public function secondsToTime(int $seconds = null, string $format = '%h hours %i mins')
     {
+        if (!$seconds) {
+            $seconds = 0;
+        }
         $dtF = new DateTime("@0");
         $dtT = new DateTime("@$seconds");
         // $format = '%h hours %i mins';
@@ -866,15 +869,24 @@ class TimeTracker
         return $files;
     }
 
-    private function startReportingServer()
+    public function startReportingServer()
     {
         $cmd = 'nohup php -S localhost:8000 -t "${PWD}/alfred-time-tracker/public" > /dev/null 2>&1 &';
-        echo exec($cmd);
+        $c = exec($cmd);
+        return $c;
     }
 
-    private function stopReportingServer()
+    public function stopReportingServer()
     {
-        $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep  php | grep -v  -e "artisan" | awk \'{print $1}\')';
-        exec($cmd, $output, $line);
+        $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep  php  | grep localhost | grep -v  -e "artisan" | awk \'{print $1}\')';
+        $c = exec($cmd);
+        return $c;
+    }
+
+    public function reportingServerStatus()
+    {
+        $cmd = 'ps -A | grep  alfred-time-tracker | grep  php | grep localhost | grep -v -e "artisan"';
+        $c = exec($cmd);
+        return $c;
     }
 }

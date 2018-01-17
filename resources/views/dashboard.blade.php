@@ -81,8 +81,9 @@
 
             <div class="title m-b-md">Today:</div>
             <div id="dailyPie"></div>
+            {!! view('timeline-table', ['timeline' => $today->data, 'reporter' => $reporter]) !!}
             <?php
-            $lastTime = null;
+
             foreach ($today->data as $task):
                 ?>
                 <p>
