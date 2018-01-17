@@ -230,7 +230,7 @@ class TimeTracker
             'command' => function ($input) {
 
                 // First lets see if the reporting server is running or not
-                $running = trim(exec('ps -A | grep alfred-time-tracker | grep php | grep -m1 -v  -e "search.php" -e "run.php"'));
+                $running = trim(exec('ps -A | grep alfred-time-tracker | grep php | grep -m1 -v  -e "artisan"'));
 
                 // Create a new Item List
                 $List = new ItemList;
@@ -498,11 +498,13 @@ class TimeTracker
         });
 
 
+
         // Loop through the logs, load them in and build the report
         foreach ($logFiles as $log) {
             $filename = pathinfo($log, PATHINFO_FILENAME);
             $day = str_replace('log_', '', $filename);
             $day = str_replace('.json', '', $day);
+
 
             $date = DateTime::createFromFormat('Y-m-d', $day);
 
@@ -869,13 +871,13 @@ class TimeTracker
 
     private function startReportingServer()
     {
-        $cmd = 'nohup php -S localhost:8000 -t "${PWD}/alfred-time-tracker/reporting/public" > /dev/null 2>&1 &';
+        $cmd = 'nohup php -S localhost:8000 -t "${PWD}/alfred-time-tracker/public" > /dev/null 2>&1 &';
         echo exec($cmd);
     }
 
     private function stopReportingServer()
     {
-        $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep  php | grep -v  -e "search.php" -e "run.php" | awk \'{print $1}\')';
+        $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep  php | grep -v  -e "artisan" | awk \'{print $1}\')';
         exec($cmd, $output, $line);
     }
 }
