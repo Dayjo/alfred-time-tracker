@@ -28,15 +28,14 @@ class Reporting extends Command
         $reporter = new TimeTrackerReporter;
 
         if ($action == 'stop') {
-            $reporter->stopReportingServer();
-
-            var_dump($status);
+            $status = $reporter->stopReportingServer();
+            echo $status;
         } elseif ($action == 'start') {
-            $reporter->startReportingServer();
-            var_dump($status);
+            $status = $reporter->startReportingServer();
+            echo $status;
         } elseif ($action == 'status') {
             $status = $reporter->reportingServerStatus();
-            var_dump($status);
+            echo $status;
         } else {
             return "Unknown command " . $action;
         }

@@ -643,7 +643,8 @@ class TimeTracker
                 switch (strtolower($input)) {
                     case 'start':
                         echo "Starting server..";
-                        $this->startReportingServer();
+                        \Artisan::call('reporting', ['action' => 'start']);
+                        // $this->startReportingServer();
                     break;
 
                     case 'stop':
@@ -871,8 +872,7 @@ class TimeTracker
 
     public function startReportingServer()
     {
-        $cmd = 'nohup php -S localhost:8000 -t public > /dev/null 2>&1 &';
-
+        $cmd = 'nohup php -S localhost:8000 -t "'.base_path().'/public" > /dev/null &';
         $c = exec($cmd, $response);
 
         foreach ($response as $line) {
@@ -890,7 +890,7 @@ class TimeTracker
 
     public function reportingServerStatus()
     {
-        $cmd = 'ps -A | grep "php -S localhost:8000"';
+        $cmd = 'ps -A | grep "php -S localhost:8000" | grep -v -e "grep"';
         $c = exec($cmd);
         return $c;
     }
