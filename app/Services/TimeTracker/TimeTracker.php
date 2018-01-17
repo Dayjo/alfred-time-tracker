@@ -230,7 +230,7 @@ class TimeTracker
             'command' => function ($input) {
 
                 // First lets see if the reporting server is running or not
-                $running = trim(exec('ps -A | grep alfred-time-tracker | grep php | grep -m1 -v  -e "artisan"'));
+                $running = $this->reportingServerStatus();
 
                 // Create a new Item List
                 $List = new ItemList;
@@ -871,21 +871,26 @@ class TimeTracker
 
     public function startReportingServer()
     {
-        $cmd = 'nohup php -S localhost:8000 -t "${PWD}/alfred-time-tracker/public" > /dev/null 2>&1 &';
-        $c = exec($cmd);
+        $cmd = 'nohup php -S localhost:8000 -t public > /dev/null 2>&1 &';
+
+        $c = exec($cmd, $response);
+
+        foreach ($response as $line) {
+            echo $line . "<br>";
+        }
         return $c;
     }
 
     public function stopReportingServer()
     {
-        $cmd = 'kill -9 $(ps -A | grep  alfred-time-tracker | grep  php  | grep localhost | grep -v  -e "artisan" | awk \'{print $1}\')';
-        $c = exec($cmd);
+        $cmd = 'kill -9 $(ps -A | grep "php -S localhost:8000" | awk \'{print $1}\')';
+        $c = exec($cmd, $response);
         return $c;
     }
 
     public function reportingServerStatus()
     {
-        $cmd = 'ps -A | grep  alfred-time-tracker | grep  php | grep localhost | grep -v -e "artisan"';
+        $cmd = 'ps -A | grep "php -S localhost:8000"';
         $c = exec($cmd);
         return $c;
     }

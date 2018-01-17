@@ -31,6 +31,41 @@
                 justify-content: center;
             }
 
+            .flex-container {
+                display: -ms-flexbox;
+                display: -webkit-flex;
+                display: flex;
+                -webkit-flex-direction: row;
+                -ms-flex-direction: row;
+                flex-direction: row;
+                -webkit-flex-wrap: nowrap;
+                -ms-flex-wrap: nowrap;
+                flex-wrap: nowrap;
+                -webkit-justify-content: center;
+                -ms-flex-pack: center;
+                justify-content: center;
+                -webkit-align-content: stretch;
+                -ms-flex-line-pack: stretch;
+                align-content: stretch;
+                -webkit-align-items: flex-start;
+                -ms-flex-align: start;
+                align-items: flex-start;
+            }
+
+            .flex-item {
+                -webkit-order: 0;
+               -ms-flex-order: 0;
+               order: 0;
+               -webkit-flex: 0 1 auto;
+               -ms-flex: 0 1 auto;
+               flex: 0 1 auto;
+               -webkit-align-self: auto;
+               -ms-flex-item-align: auto;
+               align-self: auto;
+               margin-right: 2em;
+            }
+
+
             .position-ref {
                 position: relative;
             }
@@ -75,43 +110,46 @@
                 <div id="currentlyTracking">
                 </div>
                 <hr>
-
-
             <br /><br />
 
+
             <div class="title m-b-md">Today:</div>
-            <div id="dailyPie"></div>
-            {!! view('timeline-table', ['timeline' => $today->data, 'reporter' => $reporter]) !!}
-            <?php
+            <div class="flex-container">
 
-            foreach ($today->data as $task):
-                ?>
-                <p>
-                <strong>
-                    <?=date('H:i:s', $task->time);?>
-                     -&gt;
-                     <?=date('H:i:s', $task->time + $task->length);?>
-                    (<?=$reporter->secondsToTime($task->length);?>)
-                    <?=$task->task;?>
-                </strong><br />
-                <em><?=$task->notes;?></em>
-                </p>
-
-                <?php
-            endforeach;
-            ?>
+                <div class="flex-item">
+                    <div id="dailyPie"></div>
+                </div>
+                <div class="flex-item">
+                    {!! view('timeline-table', ['timeline' => $today->data, 'reporter' => $reporter]) !!}
+                </div>
+            </div>
             <br />
+
             <div class="title m-b-md">Weekly:</div>
-            <div id="weeklyPie"></div>
-            {!! view('totals-table', ['totals' => $reporter->totals('weekly'), 'reporter' =>$reporter])->render() !!}
+
+            <div class="flex-container">
+
+                <div class="flex-item">
+                    <div id="weeklyPie"></div>
+                </div>
+                <div class="flex-item">
+
+
+                    {!! view('totals-table', ['totals' => $reporter->totals('weekly'), 'reporter' =>$reporter])->render() !!}
+                </div>
+            </div>
 
             <br />
             <div class="title m-b-md">All Time:</div>
-            <div id="allPie"></div>
+            <div class="flex-container">
 
-            {!! view('totals-table', ['totals' => $totals, 'reporter' =>$reporter])->render() !!}
-
-            <div id="example"></div>
+                <div class="flex-item">
+                    <div id="allPie"></div>
+                </div>
+                <div class="flex-item">
+                    {!! view('totals-table', ['totals' => $totals, 'reporter' =>$reporter])->render() !!}
+                </div>
+            </div>
 
             <script type="text/javascript">
                 var taskTotals = <?=json_encode($totals);?>;

@@ -32,7 +32,7 @@ class TimeTrackerReporter extends TimeTracker
                 $rangeTime = 'yesterday 18:00';
             break;
         }
-
+        $totals = [];
         foreach ($this->logFiles as $date => $logFile) {
             if (strtotime($date) > strtotime($rangeTime)) {
                 foreach ($logFile->data as $log) {

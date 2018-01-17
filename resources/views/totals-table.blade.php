@@ -4,7 +4,7 @@
             <th>Task</th>
             <th>Tracked</th>
             <th>Daily Average</th>
-            <th>Times Tracked</th>
+            <th>Logs</th>
         </tr>
     </thead>
     <tbody>
