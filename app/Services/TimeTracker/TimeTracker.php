@@ -255,8 +255,8 @@ class TimeTracker
                     // Add the new item to the list
                     $List->add(new Item([
                         'title' => 'Start Reporting Server',
-                        'arg' => ':reporting start' ,
-                        'autocomplete' => ':reporting start'])
+                        'arg' => ':reporting-start' ,
+                        'autocomplete' => ':reporting-start'])
                     );
                 }
 
@@ -643,8 +643,10 @@ class TimeTracker
                 switch (strtolower($input)) {
                     case 'start':
                         echo "Starting server..";
-                        \Artisan::call('reporting', ['action' => 'start']);
-                        // $this->startReportingServer();
+                        // \Artisan::call('reporting', ['action' => 'start']);
+                        $this->startReportingServer();
+
+                        die("STARTED");
                     break;
 
                     case 'stop':
@@ -872,7 +874,7 @@ class TimeTracker
 
     public function startReportingServer()
     {
-        $cmd = 'nohup php -S localhost:8000 -t "'.base_path().'/public" > /dev/null &';
+        $cmd = 'nohup php -S localhost:8000 -t "'.base_path().'/public" > /dev/null 2>&1 &';
         $c = exec($cmd, $response);
 
         foreach ($response as $line) {
