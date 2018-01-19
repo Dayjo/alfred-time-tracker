@@ -14,7 +14,7 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
 class TimeTracker
 {
-    private $Workflow;
+    public $Workflow;
     protected $logFiles;
     private $tasksFile;
     private $configTemplate = [
@@ -526,13 +526,18 @@ class TimeTracker
                 $previousTime = $logItem->time;
             }
 
-            // Set the last item's length
+            // Set the last item's length if it is currently not before dayEnds on the requested day
             if ($previousTime) {
-                if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
-                    $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
-                } else {
-                    $report[$day][count($report[$day])-1]->length =  null;
-                }
+                // If it's after the requested date, then set the previous time up to the end of the day
+                 if (time() >= strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
+                     if ($previousTime < strtotime($day . ' ' . $this->Workflow->config->dayEnds)) {
+                         $report[$day][count($report[$day])-1]->length = strtotime($day . ' ' . $this->Workflow->config->dayEnds) - $previousTime;
+                     } else {
+                         $report[$day][count($report[$day])-1]->length =  null;
+                     }
+                 } else {
+                     $report[$day][count($report[$day])-1]->length = time() - $previousTime;
+                 }
             }
         }
 
@@ -642,21 +647,19 @@ class TimeTracker
             'command' => function ($input) {
                 switch (strtolower($input)) {
                     case 'start':
-                        echo "Starting server..";
+                        echo "Notification: Starting server..";
                         // \Artisan::call('reporting', ['action' => 'start']);
                         $this->startReportingServer();
-
-                        die("STARTED");
                     break;
 
                     case 'stop':
-                        echo "Stopping server..";
+                        echo "Notification: Stopping server..";
                         $this->stopReportingServer();
                     break;
 
                     case 'open':
                         // echo "Opening Reports";
-                        echo "http://localhost:8000";
+                        echo "Open: http://localhost:8000";
                         break;
                 }
             }
@@ -674,7 +677,7 @@ class TimeTracker
                 }
 
                 $this->track($input);
-                echo "$input";
+                echo "Notification: Now tracking $input";
             }
           ]
         ));
@@ -687,7 +690,7 @@ class TimeTracker
             'prefix' => ':stop',
             'command' => function ($input) {
                 $this->track('stop');
-                echo "Stopped Tracking";
+                echo "Notification: Stopped Tracking";
             }
           ]
         ));
@@ -708,7 +711,7 @@ class TimeTracker
                     }
                 }
 
-                echo "Added notes!";
+                echo "Notification: Added notes!";
             }
         ]));
 
@@ -744,7 +747,7 @@ class TimeTracker
     private function clearTasks()
     {
         $this->tasksFile->data = [];
-        echo "Cleared existing task names";
+        echo "Notification: Cleared existing task names";
     }
 
     /**
@@ -843,19 +846,29 @@ class TimeTracker
         }
     }
 
-    public function secondsToTime(int $seconds = null, string $format = '%h hours %i mins')
+    public function secondsToTime(int $seconds = null, string $format = null)
     {
+        $HR = 3600;
+        $MIN = 60;
+
         if (!$seconds) {
             $seconds = 0;
         }
-        $dtF = new DateTime("@0");
-        $dtT = new DateTime("@$seconds");
-        // $format = '%h hours %i mins';
 
-        if ($seconds > 86400) {
-            $format = '%D days ' . $format;
+        $hours = floor($seconds / $HR);
+        $seconds = $seconds - ($hours * $HR);
+
+        $minutes = floor($seconds / $MIN);
+        $seconds = $seconds - ($minutes * $MIN);
+
+        if (!$format) {
+            $format = '%h hours %i mins';
         }
-        return $dtF->diff($dtT)->format($format);
+
+        $time = str_replace(['%h',  '%i',  '%s'], [$hours, $minutes, $seconds], $format);
+
+        $time = str_replace("0 hours", "", $time);
+        return $time;
     }
 
     private function getDirContents($path)

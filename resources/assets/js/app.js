@@ -10,23 +10,25 @@ import CurrentlyTracking from './components/CurrentlyTracking';
 
 require('./bootstrap');
 
-/**
- * Next, we will create a fresh React component instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
 
-// require('./components/Example');
-// require('./components/CurrentlyTracking');
+// The currently tracking bar
+if ( document.getElementById('currentlyTracking') ) {
+    var myCurrentlyTracking = ReactDOM.render(<CurrentlyTracking/>, document.getElementById('currentlyTracking'));
+}
 
 
+// Find any pie charts and load them up
+var pies = document.querySelectorAll('.LivePie');
+var reactPies = [];
+for ( var i = 0; i < pies.length; ++i ) {
+    let pieRange = pies[i].getAttribute('data-range');
+    reactPies.push( ReactDOM.render(<LivePie range={pieRange} />, pies[i]) );
+}
 
-// console.log(chartData);
-// var myChart = ReactDOM.render(<Example data={chartData}/>, document.getElementById('example'));
-// console.log(myChart);
-
-var myCurrentlyTracking = ReactDOM.render(<CurrentlyTracking/>, document.getElementById('currentlyTracking'));
-
-var dailyPie = ReactDOM.render(<LivePie range="daily" />, document.getElementById('dailyPie'));
-var weeklyPie = ReactDOM.render(<LivePie range="weekly" />, document.getElementById('weeklyPie'));
-var allPie = ReactDOM.render(<LivePie range="alltime" />, document.getElementById('allPie'));
+// The event listenres for the report form
+document.getElementById('reportRangeForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var from = document.getElementById('reportFrom').value;
+    var to = document.getElementById('reportTo').value;
+    document.location.href = "/report/range/" + from + "/" + to;
+});

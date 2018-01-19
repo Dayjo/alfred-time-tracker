@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 class CurrentlyTracking extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {number: 0, length: 55};
+        this.state = {number: 0, length: 55, extraClass: 'currentlyTracking'};
 
         // setInterval(this.update, 500);
     }
 
     componentDidMount() {
-        this.timerID = setTimeout(()=>this.update(), 1000);
+        this.update();
+        // this.timerID = setTimeout(()=>this.update(), 60000);
     }
 
     componentWillUnmount() {
@@ -32,38 +33,46 @@ class CurrentlyTracking extends React.Component {
         axios.get('/api/currently-tracking')
           .then(function (response) {
               var task = response.data.data[0];
+              var className = 'currentlyTracking';
+
+              if ( task.task == 'stop' ) {
+                  className += ' stop';
+                  task.task = 'Not Tracking...'
+              }
 
               self.setState({
                length: task['length'],
                time: self.secondsToTime(task['length']),
                task: task.task,
-               notes: task.notes
+               notes: task.notes,
+               classes: className
               });
-              self.timerID = setTimeout(()=>self.update(), 1000);
+
+              let timeout = (task['length'] < 60*60 ? 1000 : 20000)
+              self.timerID = setTimeout(()=>self.update(), timeout);
 
           })
           .catch(function (error) {
             console.log(error);
-            self.timerID = setTimeout(()=>self.update(), 2000);
+            self.timerID = setTimeout(()=>self.update(), 5000);
 
           });
-
-
     }
 
     render() {
         return (
-            <div className="currentlyTracking">
-                <div className="title m-b-md">
-                    Currently Tracking:
+            <div className={this.state.classes}>
+                <div className="currentlyTracking-task-container">
+                <div className="currentlyTracking-label">
+                    Currently Tracking
                 </div>
-                <span className="title">
-                    <strong>{this.state.task}</strong>
-                </span>
+                    <span className="currentlyTracking-task">
+                        <strong>{this.state.task}</strong>
+                    </span>
 
-                <strong> {this.state.time}</strong>
-                <br />
-                <em>{this.state.notes}</em>
+                    <strong className="currentlyTracking-time"> {this.state.time}</strong>
+                </div>
+                <div className="currentlyTracking-notes">{this.state.notes}</div>
             </div>
         )
     }

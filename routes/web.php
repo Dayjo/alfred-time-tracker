@@ -16,6 +16,9 @@ Route::get('/', 'ReportingController@getDashboard');
 Route::get('/api/currently-tracking', 'APIController@getCurrentlyTracking');
 Route::get('/api/totals/{range}', 'APIController@getTotals');
 
-
 Route::get('/search', 'ReportingController@getSearch');
 Route::get('/run', 'ReportingController@getRun');
+
+Route::get('/report/range/{from}/{to}', 'ReportingController@getRangeReport');
+Route::get('/report/month', 'ReportingController@getMonthlyReport');
+Route::get('/report/week', 'ReportingController@getWeeklyReport');

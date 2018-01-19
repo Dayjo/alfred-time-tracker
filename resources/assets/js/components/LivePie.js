@@ -76,7 +76,7 @@ class LivePie extends React.Component {
 
     render() {
         return (
-            <PieChart data={this.state.data} width={250} height={250}  options={{animateRotate: true, labels: ['test 1', 'ok what', 'this working']}}/>
+            <PieChart data={this.state.data} width={200} height={200}  options={{animateRotate: true, labels: ['test 1', 'ok what', 'this working']}}/>
         )
     }
 }

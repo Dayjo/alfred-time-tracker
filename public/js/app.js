@@ -11292,7 +11292,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_LivePie__ = __webpack_require__(241);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_LivePie__ = __webpack_require__(193);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_CurrentlyTracking__ = __webpack_require__(204);
 
 
@@ -11306,25 +11306,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 __webpack_require__(205);
 
-/**
- * Next, we will create a fresh React component instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+// The currently tracking bar
+if (document.getElementById('currentlyTracking')) {
+    var myCurrentlyTracking = __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_CurrentlyTracking__["a" /* default */], null), document.getElementById('currentlyTracking'));
+}
 
-// require('./components/Example');
-// require('./components/CurrentlyTracking');
+// Find any pie charts and load them up
+var pies = document.querySelectorAll('.LivePie');
+var reactPies = [];
+for (var i = 0; i < pies.length; ++i) {
+    var pieRange = pies[i].getAttribute('data-range');
+    reactPies.push(__WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_LivePie__["a" /* default */], { range: pieRange }), pies[i]));
+}
 
-
-// console.log(chartData);
-// var myChart = ReactDOM.render(<Example data={chartData}/>, document.getElementById('example'));
-// console.log(myChart);
-
-var myCurrentlyTracking = __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_CurrentlyTracking__["a" /* default */], null), document.getElementById('currentlyTracking'));
-
-var dailyPie = __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_LivePie__["a" /* default */], { range: 'daily' }), document.getElementById('dailyPie'));
-var weeklyPie = __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_LivePie__["a" /* default */], { range: 'weekly' }), document.getElementById('weeklyPie'));
-var allPie = __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_LivePie__["a" /* default */], { range: 'alltime' }), document.getElementById('allPie'));
+// The event listenres for the report form
+document.getElementById('reportRangeForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var from = document.getElementById('reportFrom').value;
+    var to = document.getElementById('reportTo').value;
+    document.location.href = "/report/range/" + from + "/" + to;
+});
 
 /***/ }),
 /* 94 */
@@ -22867,7 +22868,121 @@ var ReactDOMInvalidARIAHook = {
 module.exports = ReactDOMInvalidARIAHook;
 
 /***/ }),
-/* 193 */,
+/* 193 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+var PieChart = __webpack_require__(194).Pie;
+
+var LivePie = function (_React$Component) {
+    _inherits(LivePie, _React$Component);
+
+    function LivePie(props) {
+        _classCallCheck(this, LivePie);
+
+        var _this = _possibleConstructorReturn(this, (LivePie.__proto__ || Object.getPrototypeOf(LivePie)).call(this, props));
+
+        _this.state = { data: {} };
+        return _this;
+    }
+
+    _createClass(LivePie, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            this.timerID = setTimeout(function () {
+                return _this2.update();
+            }, 1000);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            clearTimeout(this.timerID);
+        }
+
+        /**
+         * Return array of percentages
+         * @param  {[type]} array [description]
+         * @return {[type]}       [description]
+         */
+
+    }, {
+        key: 'arrayPercent',
+        value: function arrayPercent(array) {
+            var i,
+                max = 0;
+            var newarray = new Array();
+
+            for (i = 0; i < array.length; i++) {
+                if (array[i] > max) max = array[i];
+            }for (i = 0; i < array.length; i++) {
+                newarray[i] = array[i] * 100 / max;
+            }return newarray;
+        }
+    }, {
+        key: 'update',
+        value: function update() {
+            var self = this;
+
+            // do an ajax request to the api and get the updated currently tracking
+            // Make a request for a user with a given ID
+            axios.get('/api/totals/' + this.props.range).then(function (response) {
+                var taskTotals = response.data.data;
+                var chartData = [];
+                var max = 0;
+
+                for (var task in taskTotals) {
+                    chartData.push({ label: task, value: taskTotals[task].length });
+
+                    max = max + taskTotals[task].length;
+                }
+
+                // Make them percentages
+                for (var i = 0; i < chartData.length; ++i) {
+                    chartData[i].value = Math.round(chartData[i].value * 100 / max);
+                }
+                console.log("AFTER", chartData);
+
+                self.setState({
+                    data: chartData
+                });
+
+                self.timerID = setTimeout(function () {
+                    return self.update();
+                }, 10000);
+            }).catch(function (error) {
+
+                self.timerID = setTimeout(function () {
+                    return self.update();
+                }, 20000);
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(PieChart, { data: this.state.data, width: 200, height: 200, options: { animateRotate: true, labels: ['test 1', 'ok what', 'this working'] } });
+        }
+    }]);
+
+    return LivePie;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = (LivePie);
+
+/***/ }),
 /* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26748,7 +26863,7 @@ var CurrentlyTracking = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (CurrentlyTracking.__proto__ || Object.getPrototypeOf(CurrentlyTracking)).call(this, props));
 
-        _this.state = { number: 0, length: 55 };
+        _this.state = { number: 0, length: 55, extraClass: 'currentlyTracking' };
 
         // setInterval(this.update, 500);
         return _this;
@@ -26757,11 +26872,8 @@ var CurrentlyTracking = function (_React$Component) {
     _createClass(CurrentlyTracking, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var _this2 = this;
-
-            this.timerID = setTimeout(function () {
-                return _this2.update();
-            }, 1000);
+            this.update();
+            // this.timerID = setTimeout(()=>this.update(), 60000);
         }
     }, {
         key: 'componentWillUnmount',
@@ -26787,21 +26899,30 @@ var CurrentlyTracking = function (_React$Component) {
             // Make a request for a user with a given ID
             axios.get('/api/currently-tracking').then(function (response) {
                 var task = response.data.data[0];
+                var className = 'currentlyTracking';
+
+                if (task.task == 'stop') {
+                    className += ' stop';
+                    task.task = 'Not Tracking...';
+                }
 
                 self.setState({
                     length: task['length'],
                     time: self.secondsToTime(task['length']),
                     task: task.task,
-                    notes: task.notes
+                    notes: task.notes,
+                    classes: className
                 });
+
+                var timeout = task['length'] < 60 * 60 ? 1000 : 20000;
                 self.timerID = setTimeout(function () {
                     return self.update();
-                }, 1000);
+                }, timeout);
             }).catch(function (error) {
                 console.log(error);
                 self.timerID = setTimeout(function () {
                     return self.update();
-                }, 2000);
+                }, 5000);
             });
         }
     }, {
@@ -26809,31 +26930,34 @@ var CurrentlyTracking = function (_React$Component) {
         value: function render() {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                { className: 'currentlyTracking' },
+                { className: this.state.classes },
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
-                    { className: 'title m-b-md' },
-                    'Currently Tracking:'
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'span',
-                    { className: 'title' },
+                    { className: 'currentlyTracking-task-container' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'currentlyTracking-label' },
+                        'Currently Tracking'
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { className: 'currentlyTracking-task' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'strong',
+                            null,
+                            this.state.task
+                        )
+                    ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'strong',
-                        null,
-                        this.state.task
+                        { className: 'currentlyTracking-time' },
+                        ' ',
+                        this.state.time
                     )
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'strong',
-                    null,
-                    ' ',
-                    this.state.time
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'em',
-                    null,
+                    'div',
+                    { className: 'currentlyTracking-notes' },
                     this.state.notes
                 )
             );
@@ -57590,131 +57714,6 @@ module.exports = function spread(callback) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 231 */,
-/* 232 */,
-/* 233 */,
-/* 234 */,
-/* 235 */,
-/* 236 */,
-/* 237 */,
-/* 238 */,
-/* 239 */,
-/* 240 */,
-/* 241 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-var PieChart = __webpack_require__(194).Pie;
-
-var LivePie = function (_React$Component) {
-    _inherits(LivePie, _React$Component);
-
-    function LivePie(props) {
-        _classCallCheck(this, LivePie);
-
-        var _this = _possibleConstructorReturn(this, (LivePie.__proto__ || Object.getPrototypeOf(LivePie)).call(this, props));
-
-        _this.state = { data: {} };
-        return _this;
-    }
-
-    _createClass(LivePie, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var _this2 = this;
-
-            this.timerID = setTimeout(function () {
-                return _this2.update();
-            }, 1000);
-        }
-    }, {
-        key: 'componentWillUnmount',
-        value: function componentWillUnmount() {
-            clearTimeout(this.timerID);
-        }
-
-        /**
-         * Return array of percentages
-         * @param  {[type]} array [description]
-         * @return {[type]}       [description]
-         */
-
-    }, {
-        key: 'arrayPercent',
-        value: function arrayPercent(array) {
-            var i,
-                max = 0;
-            var newarray = new Array();
-
-            for (i = 0; i < array.length; i++) {
-                if (array[i] > max) max = array[i];
-            }for (i = 0; i < array.length; i++) {
-                newarray[i] = array[i] * 100 / max;
-            }return newarray;
-        }
-    }, {
-        key: 'update',
-        value: function update() {
-            var self = this;
-
-            // do an ajax request to the api and get the updated currently tracking
-            // Make a request for a user with a given ID
-            axios.get('/api/totals/' + this.props.range).then(function (response) {
-                var taskTotals = response.data.data;
-                var chartData = [];
-                var max = 0;
-
-                for (var task in taskTotals) {
-                    chartData.push({ label: task, value: taskTotals[task].length });
-
-                    max = max + taskTotals[task].length;
-                }
-
-                // Make them percentages
-                for (var i = 0; i < chartData.length; ++i) {
-                    chartData[i].value = Math.round(chartData[i].value * 100 / max);
-                }
-                console.log("AFTER", chartData);
-
-                self.setState({
-                    data: chartData
-                });
-
-                self.timerID = setTimeout(function () {
-                    return self.update();
-                }, 10000);
-            }).catch(function (error) {
-
-                self.timerID = setTimeout(function () {
-                    return self.update();
-                }, 20000);
-            });
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(PieChart, { data: this.state.data, width: 250, height: 250, options: { animateRotate: true, labels: ['test 1', 'ok what', 'this working'] } });
-        }
-    }]);
-
-    return LivePie;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-/* harmony default export */ __webpack_exports__["a"] = (LivePie);
 
 /***/ })
 /******/ ]);
