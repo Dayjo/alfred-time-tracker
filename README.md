@@ -3,7 +3,7 @@
 Simple time tracking workflow for keeping track of tasks.
 
 ## Prerequisites
-* Alfred 3 (though this could easily be converted for Alfred 2)
+* Alfred 3 
 * PHP >= 7.0
 * Git (used for keeping up to date)
 * [Composer](https://getcomposer.org/) (used for keeping up to date)
