@@ -20,7 +20,7 @@ Run `tt :update` to update the time tracker. This will update the code within th
 
 ## Usage
 
-Special commands start with a colon i.e. `tt :config`, `tt :stop` or `tt :report`, everything else will get tracked as a task.
+Special commands start with a colon i.e. `tt :config`, `tt :stop` or `tt :reporting`, everything else will get tracked as a task.
 
 ---
 
@@ -29,25 +29,23 @@ Special commands start with a colon i.e. `tt :config`, `tt :stop` or `tt :report
 You can set config variables with `tt :config`, it should bring up a list of possible config variables to change, you can either type out the name of the config var, or hit tab on the list item and it should pre-fill, then simply type the new value.
 
 Alfred should display the current value of the config var in brackets.
-
-![](http://c.dayjo.me/0D0Y0v3V0F0u/Image%202018-01-09%20at%2011.27.04%20am.png)
+![](http://c.dayjo.me/0o061f1P2G3U/Screen%20Recording%202018-01-19%20at%2004.12%20pm.gif)
 
 #### dayEnds
 Setting the `dayEnds` config to a time, will make the report calculate the last task of the day up until the specified time. For instance, if I set dayEnds to `18:00`, and my last task was started at `16:00`, if I forget to stop the task at the end of the day, it will calculate 2 hours of work for the report.
 
 Turning this off (`tt :config dayEnds false`) will mean that if you do not make sure that you stop your last task before you leave, it will not be able to calculate the number of hours for that last task.
 
----
 
-### Open Workflow Directory
-If you need to review your work logs, the config, the tasks list etc, you can easily open the workflow folder using;
+#### gistAccessToken
+This is an access token from your github account with gist access. Reports are saved in a gist, and you can use `tt :backup` to backup all of your log files too.
 
-`tt :open`
+See the section on [Backup](#Backup) below.
 
 ---
 
 ### Tracking a Task
-To start tracking a task simply type: `tt <task-name>`. You should get a notification saying that the tracking has started.
+To start tracking a task simply enter: `tt <task-name>` into alfred. You should get a notification saying that the tracking has started.
 
 ---
 
@@ -67,7 +65,7 @@ Sometimes you might be tracking lots of the same thing, but want to add notes to
 
 ### Clearing Tasks
 
-You may want to clear out all of the tasks that are saved to help with auto completing. These are all stored in a tasks.json file in the /logs directory of the workflow. You can clear these out completely by doing;
+You may want to clear out all of the tasks that are saved to help with auto completing. These are all stored in a tasks.json file in the `alfred-time-tracker/storage/time-tracking` directory of the workflow. You can clear these out completely by doing;
 
 ```
 tt :clearTasks
@@ -87,9 +85,29 @@ Then run `tt :config gistAccessToken <access-token>` to set it. You can now run 
 ---
 
 ### Today
-You can see a list of today's tasks by simply typing `tt :today` into Alfred, it will list out the logs it has and their lengths.
+You can see a list of today's tasks by simply typing `tt :today` into Alfred, it will list out the logs it has and the time that has been attributed to them.
 
 ---
 
-### Generate Report
-Typing `tt :report` will give you two options, monthly or yearly report. Both will generate a report based on the logs for the current year / month, and open a markdown file with the report in. If you have configured your github access token, these will be saved to a Gist and opened for you.
+### Reporting
+
+Reporting is done by running a self-contained php server locally on your machine. You can start or stop the server any time using `tt :reporting`.
+
+![](http://c.dayjo.me/0k0n171v1m16/Image%202018-01-19%20at%204.24.05%20pm.png)
+
+Once the server is started you can access it at http://localhost:8000/
+
+You will see what you are currently tracking at the top of the page;
+
+![](http://c.dayjo.me/0U1T3D2V2g01/Image%202018-01-19%20at%204.28.16%20pm.png)
+
+You can view totals, averages and a timeline over any time period using the form or the quick buttons to Weekly and Monthly reports.
+
+
+![Timeline view](http://c.dayjo.me/0d2o0E0A0M3k/Image%202018-01-19%20at%204.30.24%20pm.png)
+
+The dashboard shows today's totals, weekly totals and all time totals.
+
+There are a pie chart breakdowns of tasks so you can visually see where your time is being spent.
+
+![](http://c.dayjo.me/103Y0K001d0b/Image%202018-01-19%20at%204.26.53%20pm.png)

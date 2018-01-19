@@ -113,11 +113,11 @@ class TimeTracker
                     //     'arg' => ":report",
                     //     'autocomplete' => ":report"
                     // ],
-                    'open'=> [
-                        'title' => "Open Workflow Folder",
-                        'arg' => ":open",
-                        'autocomplete' => ":open"
-                    ],
+                    // 'open'=> [
+                    //     'title' => "Open Workflow Folder",
+                    //     'arg' => ":open",
+                    //     'autocomplete' => ":open"
+                    // ],
                     'backup'=> [
                         'title' => "Backup your time logs",
                         'arg' => ":backup",
@@ -160,7 +160,7 @@ class TimeTracker
                 // Add the currently tracked item
                 $currentlyTracking = $this->currentlyTracking();
                 $List->add(new Item([
-                    'title' => "Currently Tracking {$currentlyTracking->task} " . $this->secondsToTime($currentlyTracking->length, "%h:%i"),
+                    'title' => "Currently Tracking {$currentlyTracking->task} " . $this->secondsToTime($currentlyTracking->length, "%h hrs %i mins"),
                     'arg' => '',
                     'valid' => false
                 ]));
@@ -205,7 +205,7 @@ class TimeTracker
                 // Create a new Item List
                 $List = new ItemList;
 
-                foreach ($this->logFiles[date('Y-m-d')]->data as $log) {
+                foreach (array_reverse($this->logFiles[date('Y-m-d')]->data) as $log) {
                     // Add the new item to the list
                     $List->add(new Item([
                         'title' => date("H:i:s", $log->time) . " " . $log->task,
@@ -316,7 +316,8 @@ class TimeTracker
                 // Loop through todays logs
                 $report[$day] = [];
                 $previousTime = 0;
-                foreach ($this->logFiles[date('Y-m-d')]->data as $logItem) {
+
+                foreach (array_reverse($this->logFiles[date('Y-m-d')]->data) as $logItem) {
                     // Add this item to the report
                     $report[$day][] = $logItem;
 
@@ -345,7 +346,7 @@ class TimeTracker
                     foreach ($day as $logItem) {
                         // Add the new item to the list
                         $List->add(new Item([
-                            'title' => $logItem->task .  " (" . ($logItem->length > 1 ?  $this->secondsToTime($logItem->length) : 'on going...') . ")",
+                            'title' => $logItem->task .  " (" . ($logItem->length > 1 ?  $this->secondsToTime($logItem->length, "%h hrs %i mins") : 'on going...') . ")",
                             'arg' => ':today',
                             'autocomplete' => ':today'])
                         );
@@ -798,7 +799,7 @@ class TimeTracker
                 // Add the currently tracked item
                 $currentlyTracking = $this->currentlyTracking();
                 $List->add(new Item([
-                    'title' => "Currently Tracking {$currentlyTracking->task} " .$this->secondsToTime($currentlyTracking->length, "%h:%i"),
+                    'title' => "Currently Tracking {$currentlyTracking->task} " .$this->secondsToTime($currentlyTracking->length, "%h hrs %i mins"),
                     'arg' => '',
                     'valid' => false
                 ]));
