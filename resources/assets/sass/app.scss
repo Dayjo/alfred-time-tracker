@@ -1,0 +1,178 @@
+
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
+.content {
+    width: $main-content-width;
+}
+
+.full-height {
+    height: 100vh;
+}
+
+
+.currentlyTracking {
+    padding-bottom: 2em;
+    border-bottom: 1px solid $laravel-border-color;
+
+    .currentlyTracking-label {
+        font-size: $font-size-base;
+        margin-right: 1em;
+        float: right;
+        color: lighten( $active-task-notes, 40%);
+
+    }
+
+
+    .currentlyTracking-task-container {
+        background: $active-task;
+        padding-left: 1em;
+    }
+
+    .currentlyTracking-notes {
+        font-style: italic;
+        background: $active-task-notes;
+        padding-left: 1em;
+    }
+
+
+    &.stop {
+        .currentlyTracking-task-container {
+            background: $brand-danger;
+        }
+
+        .currentlyTracking-label {
+            display: none;
+        }
+    }
+}
+
+.flex-center {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.flex-container {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: left;
+    -webkit-align-content: stretch;
+    -ms-flex-line-pack: stretch;
+    align-content: stretch;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+}
+
+.flex-item {
+    -webkit-order: 0;
+   -ms-flex-order: 0;
+   order: 0;
+   -webkit-flex: 0 1 auto;
+   -ms-flex: 0 1 auto;
+   flex: 0 1 auto;
+   -webkit-align-self: auto;
+   -ms-flex-item-align: auto;
+   align-self: auto;
+   flex-grow: 1;
+
+   &:first-of-type {
+       margin-right: 2em;
+       flex-grow: 0;
+   }
+
+   &:last-of-type {
+       margin-right: 0;
+       flex-grow: 1;
+   }
+
+}
+
+
+.timeline-date {
+    font-size: $font-size-title/2;
+    font-weight: bold;
+    padding-top: 2em;
+    border-top: 1px solid $laravel-border-color;
+    color: $brand-danger;
+}
+
+.timeline-task {
+    font-size: $font-size-title/3;
+    font-weight: bold;
+    color: $brand-primary;
+}
+
+.timeline-table {
+    margin-bottom: 2em;
+
+
+}
+
+tfoot, thead {
+    color: darken($text-color, 40%);
+}
+
+tbody td {
+    padding: .25em;
+}
+
+tbody tr:nth-child(2n-1) {
+    background: lighten($body-bg, 5%);
+}
+tbody tr:nth-child(2n) {
+    background: lighten($body-bg, 10%);
+}
+
+.title, .currentlyTracking-task {
+    font-size: $font-size-title;
+
+    .subtitle {
+        font-size: $font-size-base*2
+    }
+}
+
+.title-date-range span{
+    font-weight: bold;
+    color: $brand-danger;
+}
+
+#reportRangeForm {
+    margin-top: 1em;
+    
+    #reportFrom, #reportTo {
+        display: inline-block;
+        width: 30%;
+        margin: 0;
+    }
+
+
+}
+
+table {
+    width: 100%;
+}
+table th {
+    text-align: left;
+}
+
+
+.reportForm {
+    color: black;
+}

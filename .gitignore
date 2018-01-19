@@ -2,7 +2,12 @@ vendor
 .tags*
 .fuse*
 
-output
-logs
-config
-reports
+storage/time-tracking
+storage/logs
+node_modules
+/storage/*.key
+/vendor
+/.idea
+/.vagrant
+npm-debug.log
+
