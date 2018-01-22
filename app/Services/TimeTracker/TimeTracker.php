@@ -266,38 +266,7 @@ class TimeTracker
           ]
         ));
 
-        // /**
-        //  * Add the command for generating reports
-        //  */
-        // $this->Workflow->addCommand(new Command(
-        //   [
-        //     'prefix' => ':report',
-        //     'command' => function ($input) {
-        //         $reports = ['monthly','yearly'];
-        //         // Create a new Item List
-        //         $List = new ItemList;
-        //
-        //         // Loop through all of the existing task names
-        //         foreach ($reports as $report) {
-        //
-        //             // If the input matches the task name, output the task
-        //             if (trim($input) == '' || (stristr($report, $input) && $report != $input)) {
-        //
-        //                 // Add the new item to the list
-        //                 $List->add(new Item([
-        //                     'title' => 'Generate ' . $report. ' report',
-        //                     'arg' => ':report ' . $report,
-        //                     'autocomplete' => ':report ' . $report])
-        //                 );
-        //             }
-        //         }
-        //
-        //
-        //         // Output the list of tasks to
-        //         echo $List->output();
-        //     }
-        //   ]
-        // ));
+
 
 
 
@@ -839,11 +808,19 @@ class TimeTracker
     */
     private function track($task)
     {
-        $this->logFiles[date('Y-m-d')]->data[] = [ 'time' => time(), 'task' => $task, 'notes' => '' ];
+        // Look to see if notes were included
+        $task = explode("|", $task);
+
+        // Task name
+        $task[0] = trim($task[0]);
+
+        // Notes
+        $task[1] = trim($task[1]);
+        $this->logFiles[date('Y-m-d')]->data[] = [ 'time' => time(), 'task' => $task[0], 'notes' => $task[1] ];
 
         // Add $text to the list of tasks if it doesn't exist
-        if (!in_array($task, array('stop')) && !in_array($task, $this->tasksFile->data)) {
-            $this->tasksFile->data[] = $task;
+        if (!in_array($task[0], array('stop')) && !in_array($task[0], $this->tasksFile->data)) {
+            $this->tasksFile->data[] = $task[0];
         }
     }
 
