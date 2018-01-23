@@ -6,10 +6,12 @@ class LivePie extends React.Component {
     constructor(props) {
         super(props);
         this.state = {data: {}};
+        console.log(this.props);
     }
 
     componentDidMount() {
         this.timerID = setTimeout(()=>this.update(), 1000);
+        console.log(this.props);
     }
 
     componentWillUnmount() {
@@ -38,7 +40,7 @@ class LivePie extends React.Component {
 
     update() {
         var self = this;
-
+        console.log(this.props);
         // do an ajax request to the api and get the updated currently tracking
         // Make a request for a user with a given ID
         axios.get('/api/totals/' + this.props.range)

@@ -19,7 +19,7 @@
             <div class="flex-container">
 
                 <div class="flex-item">
-                    <div id="weeklyPie" class="LivePie" data-range="weekly "></div>
+                    <div id="weeklyPie" class="LivePie" data-range="weekly"></div>
                 </div>
                 <div class="flex-item">
                     {!! view('totals-table', ['totals' => $reporter->totals('weekly'), 'reporter' =>$reporter])->render() !!}
