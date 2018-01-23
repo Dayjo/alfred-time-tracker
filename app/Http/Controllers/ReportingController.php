@@ -44,7 +44,7 @@ class ReportingController extends Controller
         $reporter = new TimeTrackerReporter;
 
         if ($reporter->Workflow->config->dayEnds) {
-            $to .= $reporter->Workflow->config->dayEnds;
+            $to .= ' ' . $reporter->Workflow->config->dayEnds;
         }
         return view('report', [
             'totals' => $reporter->totals([date('Y-m-d H:i:s', strtotime($from)), date('Y-m-d H:i:s', strtotime($to))]),
@@ -83,7 +83,7 @@ class ReportingController extends Controller
          */
         public function getWeeklyReport()
         {
-            return $this->getRangeReport(date('Y-m-d', strtotime('last monday 00:00')), date('Y-m-d'), 'this week');
+            return $this->getRangeReport(date('Y-m-d', strtotime('last monday')), date('Y-m-d'), 'this week');
             //
             // $reporter = new TimeTrackerReporter;
             // return view('report', [

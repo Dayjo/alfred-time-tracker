@@ -8507,8 +8507,11 @@ tbody tr:nth-child(2n) {
 #reportRangeForm #reportFrom,
 #reportRangeForm #reportTo {
   display: inline-block;
-  width: 30%;
   margin: 0;
+}
+
+#reportRangeForm .form-group.has-feedback .glyphicon {
+  color: #3a3939;
 }
 
 table {
