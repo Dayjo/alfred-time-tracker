@@ -19,7 +19,7 @@
                     <?=$taskName;?>
                 </strong></td>
                 <td><?=$reporter->secondsToTime($counts['length'], '%h hrs %i mins');?></td>
-                <td><?=$reporter->secondsToTime($counts['length'] / $counts['count'], '%h hrs %i mins');?></td>
+                <td><?=$reporter->secondsToTime($counts['length'] / ($counts['count'] ? $counts['count'] : 1), '%h hrs %i mins');?></td>
                 <td><?=$counts['count'];?></td>
             </tr>
 

@@ -22,7 +22,8 @@ var pies = document.querySelectorAll('.LivePie');
 var reactPies = [];
 for ( var i = 0; i < pies.length; ++i ) {
     let pieRange = pies[i].getAttribute('data-range');
-    reactPies.push( ReactDOM.render(<LivePie range={pieRange} />, pies[i]) );
+    let width = pies[i].getAttribute('data-width');
+    reactPies.push( ReactDOM.render(<LivePie range={pieRange} width={width}/>, pies[i]) );
 }
 
 // The event listenres for the report form

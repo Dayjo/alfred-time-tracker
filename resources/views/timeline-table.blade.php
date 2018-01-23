@@ -3,11 +3,15 @@
 <?php
 // dd($timeline);
 // Days
-foreach ($timeline as $date => $tasks):?>
 
-    <div class="timeline-date">{!! date('D jS M o', strtotime($date)) !!}</div>
+foreach ($timeline as $date => $tasks):?>
+<div class="timeline-date stickyHeading">{!! date('D jS M o', strtotime($date)) !!}
+</div>
+<div class="LivePie" data-range="{{$date}},{{$date}}" data-width="150"></div>
+
 
 <?php
+    $dayTotal = 0;
     // Tasks
     foreach($tasks as $task => $logs):
 ?>
@@ -28,12 +32,12 @@ foreach ($timeline as $date => $tasks):?>
         $taskTotal = 0;
         foreach ($logs as $log):
             $taskTotal += $log->length;
-            if ( $log->length < 60 ) continue;
+            if ( $log->length < 10 ) continue;
 ?>
                 <tr class="timeline-log-row">
                     <td><?=date('H:i:s', $log->time);?></td>
                     <td><?=date('H:i:s', $log->time + $log->length)?></td>
-                    <td><?=$reporter->secondsToTime($log->length);?></td>
+                    <td><?=$reporter->secondsToTime($log->length, '%h hrs %i mins %s seconds');?></td>
                     <td><?=$log->notes?></td>
                 </tr>
 
@@ -52,7 +56,16 @@ foreach ($timeline as $date => $tasks):?>
     </table>
 
 <?php
+    $dayTotal += $taskTotal;
     endforeach;
+    ?>
+
+
+        <div class="dailyTotal">
+            <strong>Daily Total: </strong> {{ $reporter->secondsToTime($dayTotal) }}
+        </div>
+
+    <?php
 endforeach;
 ?>
 

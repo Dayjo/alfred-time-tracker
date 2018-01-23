@@ -14,7 +14,7 @@
     <body>
         <div class="flex-center">
             <div class="content">
-                <div id="currentlyTracking"></div>
+                <div id="currentlyTracking" ></div>
                 {!! view('report-form')->with(get_defined_vars())->render() !!}
             </div>
         </div>

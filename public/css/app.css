@@ -8526,3 +8526,10 @@ table th {
   color: black;
 }
 
+.stickyHeading {
+  background: #202020;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+

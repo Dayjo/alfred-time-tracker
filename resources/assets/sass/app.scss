@@ -179,3 +179,11 @@ table th {
 .reportForm {
     color: black;
 }
+
+
+.stickyHeading {
+    background: $body-bg;
+    position: sticky;
+    top: 0;
+}
+
