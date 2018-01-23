@@ -28,6 +28,11 @@ class APIController extends Controller
      */
     public function getTotals($range = 'weekly')
     {
+        // Check if it's a custom range
+        if (strpos($range, ",") !== false) {
+            $range = explode(",", $range);
+        }
+        
         return $this->apiResponse($this->reporter->totals($range));
     }
 

@@ -9,7 +9,7 @@
             </div>
             <div class="flex-container">
                 <div class="flex-item">
-                    <div class="LivePie" range="{{ $pieRange }}"></div>
+                    <div class="LivePie" data-range="{{ $pieRange }}"></div>
                 </div>
                 <div class="flex-item">
 

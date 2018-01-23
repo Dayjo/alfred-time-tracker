@@ -155,13 +155,16 @@ tbody tr:nth-child(2n) {
 
 #reportRangeForm {
     margin-top: 1em;
-    
+
     #reportFrom, #reportTo {
         display: inline-block;
-        width: 30%;
+
         margin: 0;
     }
 
+    .form-group.has-feedback .glyphicon {
+        color: $laravel-border-color;
+    }
 
 }
 

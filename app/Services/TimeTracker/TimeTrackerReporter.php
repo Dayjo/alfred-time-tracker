@@ -29,7 +29,7 @@ class TimeTrackerReporter extends TimeTracker
 
             case 'weekly':
                 $this->generateReport('monthly');
-                $rangeTime = 'last monday 00:00';
+                $rangeTime = 'last monday';
             break;
 
             case 'daily':
@@ -37,9 +37,12 @@ class TimeTrackerReporter extends TimeTracker
                 $rangeTime = 'yesterday 18:00';
             break;
 
+            // Some sort of custom range
             default:
                 //  a fixed date range
                 $this->generateReport('alltime');
+
+
                 //@TODO pull in the config for dayEnds
                 // $rangeTime = "$range -1 day 18:00";
 
@@ -49,7 +52,7 @@ class TimeTrackerReporter extends TimeTracker
         $totals = [];
 
         foreach (array_reverse($this->logFiles) as $date => $logFile) {
-            if ((is_array($range) && strtotime($date) >= strtotime($range[0]) && strtotime($date) <= strtotime($range[1])) || (!is_array($range) && strtotime($date) > strtotime($rangeTime))) {
+            if ((is_array($range) && strtotime($date) >= strtotime($range[0]) && strtotime($date) <= strtotime($range[1])) || (!is_array($range) && strtotime($date) >= strtotime($rangeTime))) {
                 foreach ($logFile->data as $log) {
                     if (empty($totals[$log->task])) {
                         $totals[$log->task] = ['length' => 0, 'count' => 0];
@@ -102,7 +105,7 @@ class TimeTrackerReporter extends TimeTracker
 
             case 'weekly':
                 $this->generateReport('monthly');
-                $rangeTime = 'last monday 00:00';
+                $rangeTime = 'last monday';
             break;
 
             case 'daily':

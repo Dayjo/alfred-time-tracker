@@ -22895,6 +22895,7 @@ var LivePie = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (LivePie.__proto__ || Object.getPrototypeOf(LivePie)).call(this, props));
 
         _this.state = { data: {} };
+        console.log(_this.props);
         return _this;
     }
 
@@ -22906,6 +22907,7 @@ var LivePie = function (_React$Component) {
             this.timerID = setTimeout(function () {
                 return _this2.update();
             }, 1000);
+            console.log(this.props);
         }
     }, {
         key: 'componentWillUnmount',
@@ -22936,7 +22938,7 @@ var LivePie = function (_React$Component) {
         key: 'update',
         value: function update() {
             var self = this;
-
+            console.log(this.props);
             // do an ajax request to the api and get the updated currently tracking
             // Make a request for a user with a given ID
             axios.get('/api/totals/' + this.props.range).then(function (response) {
