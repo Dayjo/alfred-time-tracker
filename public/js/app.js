@@ -11316,7 +11316,8 @@ var pies = document.querySelectorAll('.LivePie');
 var reactPies = [];
 for (var i = 0; i < pies.length; ++i) {
     var pieRange = pies[i].getAttribute('data-range');
-    reactPies.push(__WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_LivePie__["a" /* default */], { range: pieRange }), pies[i]));
+    var width = pies[i].getAttribute('data-width');
+    reactPies.push(__WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_LivePie__["a" /* default */], { range: pieRange, width: width }), pies[i]));
 }
 
 // The event listenres for the report form
@@ -22894,8 +22895,11 @@ var LivePie = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (LivePie.__proto__ || Object.getPrototypeOf(LivePie)).call(this, props));
 
-        _this.state = { data: {} };
-        console.log(_this.props);
+        _this.state = { data: {}, width: 300 };
+        if (_this.props.width) {
+            _this.state.width = _this.props.width;
+        }
+
         return _this;
     }
 
@@ -22907,7 +22911,6 @@ var LivePie = function (_React$Component) {
             this.timerID = setTimeout(function () {
                 return _this2.update();
             }, 1000);
-            console.log(this.props);
         }
     }, {
         key: 'componentWillUnmount',
@@ -22938,7 +22941,7 @@ var LivePie = function (_React$Component) {
         key: 'update',
         value: function update() {
             var self = this;
-            console.log(this.props);
+
             // do an ajax request to the api and get the updated currently tracking
             // Make a request for a user with a given ID
             axios.get('/api/totals/' + this.props.range).then(function (response) {
@@ -22975,7 +22978,7 @@ var LivePie = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(PieChart, { data: this.state.data, width: 200, height: 200, options: { animateRotate: true, labels: ['test 1', 'ok what', 'this working'] } });
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(PieChart, { data: this.state.data, width: this.state.width, height: this.state.width, options: { animateRotate: true, labels: ['test 1', 'ok what', 'this working'] } });
         }
     }]);
 

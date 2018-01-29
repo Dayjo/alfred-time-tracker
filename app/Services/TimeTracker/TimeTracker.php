@@ -34,13 +34,10 @@ class TimeTracker
 
 
         // Grab the current log
-        $this->logFiles[date('Y-m-d')] = new JSON($this->logPath . date('Y') . '/' . date('M') .'/log_' . date('Y-m-d') . '.json');
-        if (empty($this->logFiles[date('Y-m-d')]->data)) {
-            $this->logFiles[date('Y-m-d')]->data = array();
-        }
+        $this->logFiles[date('Y-m-d')] = $this->getLog(date('Y-m-d'));
 
         // Grab all of the existing tasks
-        $this->tasksFile = new JSON($this->logPath . '../tasks.json');
+        $this->tasksFile = new JSON($this->logPath . '../tasks.json', false);
 
         $this->Workflow = new Workflow($this->configTemplate, $this->configPath . '/config.json');
     }
@@ -286,7 +283,7 @@ class TimeTracker
                 $report[$day] = [];
                 $previousTime = 0;
 
-                foreach (array_reverse($this->logFiles[date('Y-m-d')]->data) as $logItem) {
+                foreach (array_reverse((array)$this->logFiles[date('Y-m-d')]->data) as $logItem) {
                     // Add this item to the report
                     $report[$day][] = $logItem;
 
@@ -307,6 +304,13 @@ class TimeTracker
                     'arg' => ':today',
                     'autocomplete' => ':today'])
                 );
+                // Add the currently tracked item
+                $currentlyTracking = $this->currentlyTracking();
+                $List->add(new Item([
+                    'title' => "Currently Tracking {$currentlyTracking->task} " .$this->secondsToTime($currentlyTracking->length, "%h hrs %i mins"),
+                    'arg' => '',
+                    'valid' => false
+                ]));
 
                 foreach ($report as $date => $day) {
                     $date = DateTime::createFromFormat('Y-m-d', $date);
@@ -373,15 +377,20 @@ class TimeTracker
     /**
      * Function to get a log for a specific date.
      * @param  String $date [description]
-     * @return [type]       [description]
+     * @return JSON
      */
     public function getLog(String $date)
     {
         if (empty($this->logFiles[date('Y-m-d', strtotime($date))])) {
-            $this->logFiles[date('Y-m-d', strtotime($date))] = new JSON($this->logPath . date('Y', strtotime($date)) . '/' . date('M', strtotime($date)) .'/log_' . date('Y-m-d', strtotime($date)) . '.json');
+            $this->logFiles[date('Y-m-d', strtotime($date))] = new JSON($this->logPath . date('Y', strtotime($date)) . '/' . date('M', strtotime($date)) .'/log_' . date('Y-m-d', strtotime($date)) . '.json', false);
         }
 
-        // Let's just go and make sure the 'lengths' are correct
+        // If it's got set to null some how (usually when it's created) make it an empty array
+        // dd($this->logFiles[date('Y-m-d', strtotime($date))]->data);
+        if (empty($this->logFiles[date('Y-m-d', strtotime($date))]->data) || (!is_array($this->logFiles[date('Y-m-d', strtotime($date))]->data) && property_exists($this->logFiles[date('Y-m-d', strtotime($date))]->data, "-1"))) {
+            $this->logFiles[date('Y-m-d', strtotime($date))]->data = [];
+            $this->logFiles[date('Y-m-d', strtotime($date))]->save();
+        }
 
         return $this->logFiles[date('Y-m-d', strtotime($date))];
     }
@@ -405,7 +414,7 @@ class TimeTracker
         $backup['tasks.json'] = ['content' => file_get_contents($this->logPath . '../tasks.json')];
 
         /* Loop through all log directories */
-        $githubClient = new \GithubClient();
+        $githubClient = new \Github\Client();
         $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, \Github\Client::AUTH_URL_TOKEN);
 
         // Create a new gist
@@ -717,6 +726,7 @@ class TimeTracker
     private function clearTasks()
     {
         $this->tasksFile->data = [];
+        $this->tasksFile->save();
         echo "Notification: Cleared existing task names";
     }
 
@@ -736,8 +746,7 @@ class TimeTracker
                 }
 
                 // Load in the tasks json
-                $JSON = new JSON($this->logPath . '../tasks.json');
-                $tasks =& $JSON->data;
+                $tasks = $this->tasksFile->data;
 
                 // Create a new Item List
                 $List = new ItemList;
@@ -750,8 +759,9 @@ class TimeTracker
                     'autocomplete' => $input])
                 );
 
+
                 // Loop through all of the existing task names
-                foreach ($tasks as $task) {
+                foreach ((array)$tasks as $task) {
 
                     // If the input matches the task name, output the task
                     if (stristr($task, $input) && $task != $input) {
@@ -764,6 +774,8 @@ class TimeTracker
                         );
                     }
                 }
+
+
 
                 // Add the currently tracked item
                 $currentlyTracking = $this->currentlyTracking();
@@ -782,16 +794,18 @@ class TimeTracker
 
     /**
      * Return the currently tracked task
-     * @return
+     * @return JSON
      */
     public function currentlyTracking()
     {
         if (is_array($this->logFiles[date('Y-m-d')]->data)) {
-            $currentlyTracking = $this->logFiles[date('Y-m-d')]->data[ count($this->logFiles[date('Y-m-d')]->data)-1 ];
+            $currentlyTracking =& $this->logFiles[date('Y-m-d')]->data[ count($this->logFiles[date('Y-m-d')]->data)-1 ];
             if ($currentlyTracking) {
                 $currentlyTracking->length = time() - $currentlyTracking->time;
             }
-            return $currentlyTracking;
+
+            // Save the currently tracking log with the updated length
+            $this->logFiles[date('Y-m-d')]->save();
         } else {
             $currentlyTracking =  new \stdClass;
             $currentlyTracking->task = "Nothing";
@@ -816,11 +830,14 @@ class TimeTracker
 
         // Notes
         $task[1] = trim($task[1]);
+
         $this->logFiles[date('Y-m-d')]->data[] = [ 'time' => time(), 'task' => $task[0], 'notes' => $task[1] ];
+        $this->logFiles[date('Y-m-d')]->save();
 
         // Add $text to the list of tasks if it doesn't exist
         if (!in_array($task[0], array('stop')) && !in_array($task[0], $this->tasksFile->data)) {
             $this->tasksFile->data[] = $task[0];
+            $this->tasksFile->save();
         }
     }
 
@@ -845,7 +862,18 @@ class TimeTracker
 
         $time = str_replace(['%h',  '%i',  '%s'], [$hours, $minutes, $seconds], $format);
 
-        $time = str_replace("0 hours", "", $time);
+        if ($minutes > 1  || $hours > 0) {
+            $time = str_replace($seconds . " seconds", "", $time);
+        }
+        if ($hours == 0) {
+            $time = str_replace(["0 hours","0 hrs"], "", $time);
+        }
+
+        if ($minutes  == 0) {
+            $time = str_replace("0 mins", "", $time);
+        }
+
+
         return $time;
     }
 

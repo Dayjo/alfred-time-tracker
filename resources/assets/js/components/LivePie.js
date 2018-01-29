@@ -5,13 +5,16 @@ const PieChart = require("react-chartjs").Pie;
 class LivePie extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {data: {}};
-        console.log(this.props);
+        this.state = {data: {}, width: 300 };
+        if ( this.props.width ) {
+            this.state.width = this.props.width;
+        }
+
     }
 
     componentDidMount() {
         this.timerID = setTimeout(()=>this.update(), 1000);
-        console.log(this.props);
+
     }
 
     componentWillUnmount() {
@@ -40,7 +43,7 @@ class LivePie extends React.Component {
 
     update() {
         var self = this;
-        console.log(this.props);
+
         // do an ajax request to the api and get the updated currently tracking
         // Make a request for a user with a given ID
         axios.get('/api/totals/' + this.props.range)
@@ -78,7 +81,7 @@ class LivePie extends React.Component {
 
     render() {
         return (
-            <PieChart data={this.state.data} width={200} height={200}  options={{animateRotate: true, labels: ['test 1', 'ok what', 'this working']}}/>
+            <PieChart data={this.state.data} width={this.state.width} height={this.state.width}  options={{animateRotate: true, labels: ['test 1', 'ok what', 'this working']}}/>
         )
     }
 }

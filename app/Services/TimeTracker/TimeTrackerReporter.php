@@ -59,6 +59,10 @@ class TimeTrackerReporter extends TimeTracker
                     }
 
                     $totals[$log->task]['length'] += $log->length;
+
+                    if ($log->length < 10) {
+                        continue;
+                    }
                     $totals[$log->task]['count'] ++;
                 }
             }
