@@ -283,7 +283,7 @@ class TimeTracker
                 $report[$day] = [];
                 $previousTime = 0;
 
-                foreach (array_reverse($this->logFiles[date('Y-m-d')]->data) as $logItem) {
+                foreach (array_reverse((array)$this->logFiles[date('Y-m-d')]->data) as $logItem) {
                     // Add this item to the report
                     $report[$day][] = $logItem;
 
@@ -385,7 +385,12 @@ class TimeTracker
             $this->logFiles[date('Y-m-d', strtotime($date))] = new JSON($this->logPath . date('Y', strtotime($date)) . '/' . date('M', strtotime($date)) .'/log_' . date('Y-m-d', strtotime($date)) . '.json', false);
         }
 
-        // Let's just go and make sure the 'lengths' are correct
+        // If it's got set to null some how (usually when it's created) make it an empty array
+        // dd($this->logFiles[date('Y-m-d', strtotime($date))]->data);
+        if (empty($this->logFiles[date('Y-m-d', strtotime($date))]->data) || (!is_array($this->logFiles[date('Y-m-d', strtotime($date))]->data) && property_exists($this->logFiles[date('Y-m-d', strtotime($date))]->data, "-1"))) {
+            $this->logFiles[date('Y-m-d', strtotime($date))]->data = [];
+            $this->logFiles[date('Y-m-d', strtotime($date))]->save();
+        }
 
         return $this->logFiles[date('Y-m-d', strtotime($date))];
     }
@@ -409,7 +414,7 @@ class TimeTracker
         $backup['tasks.json'] = ['content' => file_get_contents($this->logPath . '../tasks.json')];
 
         /* Loop through all log directories */
-        $githubClient = new \GithubClient();
+        $githubClient = new \Github\Client();
         $githubClient->authenticate($this->Workflow->config->gistAccessToken, null, \Github\Client::AUTH_URL_TOKEN);
 
         // Create a new gist
@@ -825,8 +830,10 @@ class TimeTracker
 
         // Notes
         $task[1] = trim($task[1]);
+
         $this->logFiles[date('Y-m-d')]->data[] = [ 'time' => time(), 'task' => $task[0], 'notes' => $task[1] ];
         $this->logFiles[date('Y-m-d')]->save();
+
         // Add $text to the list of tasks if it doesn't exist
         if (!in_array($task[0], array('stop')) && !in_array($task[0], $this->tasksFile->data)) {
             $this->tasksFile->data[] = $task[0];
